@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #004d00;
+  --color-secondary: #004d00cc;
+  --screen-3xl: "2000px",
+    /* Define your custom color */
+}
+
+@layer utilities {
+  @keyframes scroll {
+    0% {
+      transform: translateY(0);
+    }
+
+    100% {
+      transform: translateY(-100%);
+    }
+  }
+
+  .animate-scroll {
+    animation: scroll 20s linear infinite;
+  }
+}
+
+:root {
+  --PrimaryColor: #004d00;
+}
