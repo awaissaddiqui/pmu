@@ -56,7 +56,7 @@ const UnNationalProgramPage2 = () => {
     };
 
     const handleChange = (event) => {
-        event.preventDefault();
+        // event.preventDefault();
         const { name, value, type } = event.target;
 
         dispatch({
@@ -158,21 +158,25 @@ const UnNationalProgramPage2 = () => {
                 </div>
 
                 {/* Transport Details Table */}
-                <h3 className="text-lg font-semibold mb-2">If yes, kindly fill the details:</h3>
-                <DynamicTable
-                    tableTitle="transport"
-                    firstColumnTitle="#"
-                    headers={[
-                        "",
-                        "Transport Type",
-                        "Make/Model",
-                        "Engine Capacity (CC)",
-                        "Registration No",
-                        "Ownership Period",
-                    ]}
-                    dispatch={dispatch}
-                    numRows={3}
-                />
+                {formData.familyTransport === "yes" && (
+                    <>
+                        <h3 className="text-lg font-semibold mb-2">If yes, kindly fill the details:</h3>
+                        <DynamicTable
+                            tableTitle="transport"
+                            firstColumnTitle="#"
+                            headers={[
+                                "",
+                                "Transport Type",
+                                "Make/Model",
+                                "Engine Capacity (CC)",
+                                "Registration No",
+                                "Ownership Period",
+                            ]}
+                            dispatch={dispatch}
+                            numRows={3}
+                        />
+                    </>
+                )}
 
 
                 <h4 className="mt-4 text-gray-600">
@@ -297,20 +301,24 @@ const UnNationalProgramPage2 = () => {
                     </div>
                 </div>
                 {/* if yes then fill form */}
-                <h2 className=" text-xl mt-4  ">If yes fill the details of scholarships & attach documentary proof of the scholarships</h2>
-                <DynamicTable
-                    tableTitle="scholarshipsDetails"
-                    firstColumnTitle="#"
-                    headers={[
-                        "Name of institute",
-                        "Scholarship Name",
-                        "Total Scholarship Amount",
-                        "Total Scholarship Period",
-                        "Class/level at which Scholarship was granted",
-                    ]}
-                    dispatch={dispatch}
-                    numRows={3}
-                />
+                {formData.scholarship === "yes" && (
+                    <>
+                        <h2 className=" text-xl mt-4  ">If yes fill the details of scholarships & attach documentary proof of the scholarships</h2>
+                        <DynamicTable
+                            tableTitle="scholarshipsDetails"
+                            firstColumnTitle="#"
+                            headers={[
+                                "Name of institute",
+                                "Scholarship Name",
+                                "Total Scholarship Amount",
+                                "Total Scholarship Period",
+                                "Class/level at which Scholarship was granted",
+                            ]}
+                            dispatch={dispatch}
+                            numRows={3}
+                        />
+                    </>
+                )}
 
                 <label className="mt-4 block font-medium mb-2"> Statement of Purpose (Explain your suitability for this scholarship) - attach separate sheet if required
                     <input type="text"
@@ -319,7 +327,7 @@ const UnNationalProgramPage2 = () => {
                         name="scholarshipStatementOP"
                         className="w-full p-2 border rounded" required />
                 </label>
-                <h4 className="mt-4 text-gray-900">Download Undertaking: <a href="" className="text-blue-800 underline" target="_blank"> Download Undertaking</a> Upload Signed Undertaking:</h4>
+                <h4 className="mt-4 text-gray-900"> <a href="/unNationalSignedDoc" download className="text-blue-800 underline" target="_blank"> Download Undertaking</a> and then Upload Signed Undertaking:</h4>
                 <label className="mt-6 block font-medium mb-2">Upload Signed Undertaking:
                     <input type="file"
                         name="undertaking_signed"

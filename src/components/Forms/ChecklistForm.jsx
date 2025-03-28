@@ -42,8 +42,7 @@ const ChecklistForm = () => {
             <form className="overflow-x-auto" onSubmit={(e) => {
                 e.preventDefault();
                 submitForm();
-                alert("Form Submitted Successfully");
-                navigate('/')
+                // navigate('/')
             }}>
                 <table className="w-full border-collapse border border-gray-300">
                     <thead>
@@ -115,9 +114,9 @@ const ChecklistForm = () => {
                     <div className="mt-4">
                         <label className="block text-gray-700 font-medium">Download Documents</label>
                         <a
-                            href="/endorsment.pdf"
+                            href="/reasearchEndorsementDoc.pdf"
                             download
-                            className="inline-block mt-2 bg-gray-600 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600 transition"
+                            className="inline-block mt-2 bg-blue-800 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600 transition"
                         >
                             Download
                         </a>

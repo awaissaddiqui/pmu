@@ -14,7 +14,7 @@ function Research() {
                         Higher Education Research Endowment Fund (HEREF)
                     </h1>
                     <p className="text-gray-700 mb-6 leading-relaxed">
-                        The research grants are offered to qualified scholars/researchers in Khyber Pakhtunkhwa...
+                        The research grants are offered to qualified scholars/researchers in Khyber Pakhtunkhwa promoting with focus on the natural resources of the province, promoting local industry, import-export potential, and its contribution to the economy. Through PMU-HED research grants are awarded to qualified scholars in the Public Sector Universities/Government Colleges of Khyber Pakhtunkhwa. The award of research grants is operated under the Khyber Pakhtunkhwa Higher Education Research Endowment Fund Act, 2004.
                     </p>
                 </div>
                 <div className="flex-1">
@@ -30,15 +30,15 @@ function Research() {
                 <div className="flex-1">
                     <h2 className="text-2xl font-bold mb-4">Phases</h2>
                     <p className="text-gray-700 mb-6 leading-relaxed">
-                        In phase 1 of the scheme, 22 research grants were awarded...
+                        In phase 1 of scheme 22 research grants have been awarded to principal investigators through their concerned institutes. The next phase is under process and 27 research proposals have been shortlisted for funding by the technical committee focal persons.
                     </p>
                 </div>
             </div>
 
             {/* Apply Button */}
-            <div className="text-center">
+            <div className="text-center flex flex-col items-center">
                 <p className="text-gray-700 mt-6">Please read the instructions carefully before submitting the form.</p>
-                <p className="text-blue-600 underline cursor-pointer mb-6">Download Instructions</p>
+                <a className="text-blue-600 underline cursor-pointer mb-6" href="/reasearchInstruction.pdf" download>Download Instructions</a>
                 <Link
                     className="px-6 py-2 bg-green-600 text-white text-lg font-semibold rounded-lg hover:bg-green-700 transition"
                     to="/research/registration"

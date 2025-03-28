@@ -12,7 +12,7 @@ const AdminPhdInternational = () => {
             try {
                 const storedData = JSON.parse(localStorage.getItem("formDataPhdInternational")) || [];
                 const userForm = storedData.data.find((item) => item.email === email); // ✅ Find the specific form by email
-                // console.log(userForm);
+                console.log(userForm);
                 setFormData(userForm ? [userForm] : []);
             } catch (error) {
                 console.error("Error fetching form details:", error);
@@ -55,9 +55,12 @@ const AdminPhdInternational = () => {
                     { label: "Office", name: "office" },
                     { label: "References in Pakistan", name: "references" },
                     { label: "Marital Status", name: "marital_status" },
-                    { label: "Dependents", name: "dependents" },
+                    ...(formData[0]?.marital_status === "married" ?
+                        [
+                            { label: "Details", name: "spouse_details" },
+                        ] : []),
+                    // { label: "Dependents", name: "dependents" },
                     { label: "Other Nationality", name: "other_nationality" },
-                    { label: "Other Nationality Details", name: "other_nationality_details" }
                 ]}
             />
             {/* education details */}
@@ -223,21 +226,26 @@ const AdminPhdInternational = () => {
                     { label: "From", name: "from" },
                     { label: "To", name: "to" },
                     { label: "Last Drawn Gross Salary (Attach Pay Slip) (Rs.) Monthly", name: "salary" },
-                    { label: "Is your father alive", name: "fatherAlive" },
-                    { label: "If yes, Full Name", name: "fatherName" },
-                    { label: "Telephone No", name: "fatherPhone" },
-                    { label: "Mobile No", name: "fatherMobile" },
-                    { label: "Email", name: "fatherEmail" },
-                    { label: "Is your Father currently employed?", name: "fatherEmployed" },
-                    { label: "Designation", name: "fatherDesignation" },
-                    { label: "Date of Joining (dd/mm/yy)", name: "fatherJoiningDate" },
-                    { label: "Full Name", name: "spouseName" },
+                    { label: "Father alive ?", name: "fatherAlive" },
+                    ...(formData[0]?.fatherAlive ? [
+                        { label: "If yes, Full Name", name: "fatherName" },
+                        { label: "Telephone No", name: "fatherPhone" },
+                        { label: "Mobile No", name: "fatherMobile" },
+                        { label: "Email", name: "fatherEmail" },
+                        { label: "Is your Father currently employed?", name: "fatherEmployed" },
+                        { label: "Designation", name: "fatherDesignation" },
+                        { label: "Date of Joining (dd/mm/yy)", name: "fatherJoiningDate" },
+                    ] : []),
+                    { label: "Spouse Full Name", name: "spouseName" },
                     { label: "Age", name: "spouseAge" },
                     { label: "Telephone No", name: "spousePhone" },
                     { label: "Mobile No", name: "spouseMobile" },
                     { label: "Email", name: "spouseEmail" },
                     { label: "Is your Spouse currently employed?", name: "spouseEmployed" },
-                    { label: "Organization", name: "Organization" },
+                    ...(formData[0]?.spouseEmployed ? [
+                        { label: "Organization", name: "Organization" },
+                    ] : []
+                    )
                 ]}
             />
 
@@ -288,7 +296,7 @@ const AdminPhdInternational = () => {
                 </table>
             </div>
             {/* Spouced Employed */}
-            <label className="block text-lg font-semibold">Is your spouse employed?</label>
+            <label className="block text-lg font-semibold"> Do you foresee a significant increase or decrease in your family income next year?</label>
             <div className="flex items-center space-x-4">
                 <input type='checkbox' checked={formData[0]?.spouseEmployed} disabled />
                 <label className="text-lg font-semibold text-black">{formData[0]?.spouseEmployed ? "Yes" : "No"}</label>
@@ -301,12 +309,15 @@ const AdminPhdInternational = () => {
                 data={formData?.[0] || {}}
                 fields={[
                     { label: "1. Is the house you live in owned by your family?", name: "houseOwned" },
-                    { label: "If Yes, please explain:", name: "explanation" },
-                    { label: "Year of Purchase:", name: "purchaseYear" },
-                    { label: "Original Purchase Price (Rs.):", name: "originalPrice" },
-                    { label: "Present Market Value (Rs.):", name: "presentMarketValue" },
-                    { label: "House Plot Size (Kanals/Marlas/Sq. Feet):", name: "plotSize" },
-                    { label: "Address:", name: "address" },
+                    ...(formData[0]?.houseOwned ? [
+                        { label: "If Yes, please explain:", name: "explanation" },
+                        { label: "Year of Purchase:", name: "purchaseYear" },
+                        { label: "Original Purchase Price (Rs.):", name: "originalPrice" },
+                        { label: "Present Market Value (Rs.):", name: "presentMarketValue" },
+                        { label: "House Plot Size (Kanals/Marlas/Sq. Feet):", name: "plotSize" },
+                        { label: "Address:", name: "address" },
+                    ] : []
+                    ),
                     { label: "2. Does your family own any other plot(s), house(s), shop(s), or land(s)?", name: "otherAssets" },
                 ]}
             />

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import Slider from '../components/Slider';
-import HomeImg from '../assets/cr3.jpeg'
+// import HomeImg from '../assets/cr3.jpeg'
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../Firebase';
 // const newsItems = [

@@ -7,7 +7,7 @@ import FormInput from "../../FormInput";
 const UnNationalProgram = () => {
     const { formData, dispatch } = useUndergraduateForm();
     const handleChange = (event) => {
-        event.preventDefault();
+        // event.preventDefault();
         const { name, value, type } = event.target;
 
         dispatch({

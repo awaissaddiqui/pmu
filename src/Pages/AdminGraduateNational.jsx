@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import InfoGrid from '../components/InfoGrid';
+import * as XLSX from 'xlsx';
+
 
 const AdminGraduateNational = () => {
     const [formData, setFormData] = useState([]);
@@ -22,12 +24,59 @@ const AdminGraduateNational = () => {
         fetchData();
     }, [email]);
 
+    const flattenObject = (obj, parentKey = '', result = {}) => {
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                const newKey = parentKey ? `${parentKey}.${key}` : key;
+                if (typeof obj[key] === 'object' && obj[key] !== null) {
+                    flattenObject(obj[key], newKey, result);
+                } else {
+                    result[newKey] = obj[key];
+                }
+            }
+        }
+        return result;
+    };
+
+    // Function to convert JSON to Excel and trigger download
+    const exportToExcel = () => {
+        if (formData.length === 0) {
+            alert("No data to export!");
+            return;
+        }
+
+        // Flatten the nested arrays/objects in formData
+        const flattenedData = formData.map((item) => flattenObject(item));
+
+        // Create a new workbook
+        const workbook = XLSX.utils.book_new();
+
+        // Convert flattened JSON to worksheet
+        const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+
+        // Add the worksheet to the workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, "FormData");
+
+        // Write the workbook to a file and trigger download
+        XLSX.writeFile(workbook, "FormData.xlsx");
+    };
+
     if (!formData) {
         return <h1 className="text-5xl text-center text-gray-500">No data found</h1>;
     }
 
     return (
         <div className="w-full mx-auto bg-white shadow-lg rounded-lg p-6">
+            {formData.length > 0 ? (
+                <div>
+                    {/* <pre>{JSON.stringify(formData, null, 2)}</pre> */}
+                    <button onClick={exportToExcel} className="bg-blue-500 text-white p-2 rounded-lg">
+                        Download as Excel
+                    </button>
+                </div>
+            ) : (
+                <p>No data found for the specified email.</p>
+            )}
             <h2 className="text-3xl font-bold text-center mb-6">Graduate Form Details</h2>
 
             {/* Personal Information */}
@@ -55,7 +104,12 @@ const AdminGraduateNational = () => {
                     { label: "Office", name: "office" },
                     { label: "References in Pakistan", name: "references" },
                     { label: "Marital Status", name: "marital_status" },
-                    { label: "Dependents", name: "dependents" },
+                    ...(formData[0]?.marital_status === "married" ?
+                        [
+                            { label: "Details", name: "spouse_details" },
+                            { label: "Dependents", name: "dependents" },
+                        ] : []),
+
                     { label: "Other Nationality", name: "other_nationality" },
                     { label: "Other Nationality Details", name: "other_nationality_details" }
                 ]}
@@ -203,21 +257,26 @@ const AdminGraduateNational = () => {
                     { label: "From", name: "from" },
                     { label: "To", name: "to" },
                     { label: "Last Drawn Gross Salary (Attach Pay Slip) (Rs.) Monthly", name: "salary" },
-                    { label: "Is your father alive", name: "fatherAlive" },
-                    { label: "If yes, Full Name", name: "fatherName" },
-                    { label: "Telephone No", name: "fatherPhone" },
-                    { label: "Mobile No", name: "fatherMobile" },
-                    { label: "Email", name: "fatherEmail" },
-                    { label: "Is your Father currently employed?", name: "fatherEmployed" },
-                    { label: "Designation", name: "fatherDesignation" },
-                    { label: "Date of Joining (dd/mm/yy)", name: "fatherJoiningDate" },
-                    { label: "Full Name", name: "spouseName" },
+                    { label: "Father alive ?", name: "fatherAlive" },
+                    ...(formData[0]?.fatherAlive ? [
+                        { label: "If yes, Full Name", name: "fatherName" },
+                        { label: "Telephone No", name: "fatherPhone" },
+                        { label: "Mobile No", name: "fatherMobile" },
+                        { label: "Email", name: "fatherEmail" },
+                        { label: "Is your Father currently employed?", name: "fatherEmployed" },
+                        { label: "Designation", name: "fatherDesignation" },
+                        { label: "Date of Joining (dd/mm/yy)", name: "fatherJoiningDate" },
+                    ] : []),
+                    { label: "Spouse Full Name", name: "spouseName" },
                     { label: "Age", name: "spouseAge" },
                     { label: "Telephone No", name: "spousePhone" },
                     { label: "Mobile No", name: "spouseMobile" },
                     { label: "Email", name: "spouseEmail" },
                     { label: "Is your Spouse currently employed?", name: "spouseEmployed" },
-                    { label: "Organization", name: "Organization" },
+                    ...(formData[0]?.spouseEmployed ? [
+                        { label: "Organization", name: "Organization" },
+                    ] : []
+                    )
                 ]}
             />
 
@@ -281,12 +340,15 @@ const AdminGraduateNational = () => {
                 data={formData?.[0] || {}}
                 fields={[
                     { label: "1. Is the house you live in owned by your family?", name: "houseOwned" },
-                    { label: "If Yes, please explain:", name: "explanation" },
-                    { label: "Year of Purchase:", name: "purchaseYear" },
-                    { label: "Original Purchase Price (Rs.):", name: "originalPrice" },
-                    { label: "Present Market Value (Rs.):", name: "presentMarketValue" },
-                    { label: "House Plot Size (Kanals/Marlas/Sq. Feet):", name: "plotSize" },
-                    { label: "Address:", name: "address" },
+                    ...(formData[0]?.houseOwned ? [
+                        { label: "If Yes, please explain:", name: "explanation" },
+                        { label: "Year of Purchase:", name: "purchaseYear" },
+                        { label: "Original Purchase Price (Rs.):", name: "originalPrice" },
+                        { label: "Present Market Value (Rs.):", name: "presentMarketValue" },
+                        { label: "House Plot Size (Kanals/Marlas/Sq. Feet):", name: "plotSize" },
+                        { label: "Address:", name: "address" },
+                    ] : []
+                    ),
                     { label: "2. Does your family own any other plot(s), house(s), shop(s), or land(s)?", name: "otherAssets" },
                 ]}
             />

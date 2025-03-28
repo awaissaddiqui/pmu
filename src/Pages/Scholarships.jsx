@@ -21,16 +21,23 @@ function Scholarships() {
             <div className="max-w-6xl xl:max-w-full mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 gap-8">
                     {scholarships.map((scholarship, index) => (
-                        <div key={index} className="bg-white p-8 rounded-lg shadow-lg border border-gray-300 flex flex-col items-center text-center">
+                        <div
+                            key={index}
+                            className="bg-white p-8 rounded-lg shadow-lg border border-gray-300 flex flex-col items-center text-center h-full"
+                        >
                             <img src={GOV} alt="Government of Khyber Pakhtunkhwa" className="rounded-lg w-32 h-32 mb-4" />
                             <h3 className="text-2xl font-bold text-gray-800 mb-4">{scholarship.title}</h3>
-                            <p className="text-gray-600 text-start leading-relaxed mb-6">{scholarship.description}</p>
-                            <Link
-                                to={scholarship.link}
-                                className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300"
-                            >
-                                View details →
-                            </Link>
+                            <p className="text-gray-600 text-start leading-relaxed flex-grow">{scholarship.description}</p>
+
+                            {/* Static Button at Bottom */}
+                            <div className="mt-auto w-full">
+                                <Link
+                                    to={scholarship.link}
+                                    className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300 w-full block text-center"
+                                >
+                                    View details →
+                                </Link>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -40,3 +47,4 @@ function Scholarships() {
 }
 
 export default Scholarships;
+

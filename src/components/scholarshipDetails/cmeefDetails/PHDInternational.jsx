@@ -54,7 +54,7 @@ const PHDInternational = () => {
 
     // handle change in form fields
     const handleChange = (event) => {
-        event.preventDefault();
+        // event.preventDefault();
         const { name, value, type } = event.target;
 
         dispatch({
@@ -112,9 +112,8 @@ const PHDInternational = () => {
                         { label: "Fax", name: "fax", type: "tel" },
                         { label: "Office", name: "office", type: "tel" },
                         { label: "References in Pakistan", name: "references", type: "text" },
-                        { name: "marital_status", label: "Marital Status", type: "radio", options: ["Married", "Single"] },
-                        { label: "If married, please specify number of people financially dependent on you", name: "dependents", type: "text" },
                         { name: "other_nationality", label: "Do you have a valid visa to the country of the proposed study?", type: "radio", options: ["Yes", "No"] },
+                        { name: "marital_status", label: "Marital Status", type: "radio", options: ["Married", "Single"] },
                     ].map((field) => (
                         <FormInput
                             key={field.name}
@@ -124,6 +123,20 @@ const PHDInternational = () => {
                         />
                     ))}
                 </div>
+                {
+                    formData.marital_status === "married" && (
+                        <label className="block font-medium">
+                            If married, please provide spouse's details:
+                            <input
+                                className="w-full p-1 border rounded"
+                                name="spouse_details"
+                                type="text"
+                                value={formData.spouse_details || ""}
+                                onChange={handleChange}
+                            />
+                        </label>
+                    )
+                }
                 <label htmlFor="attested_photo">Upload Attested Photo
                     <input
                         className="w-full p-4 border rounded-md cursor-pointer"
@@ -248,20 +261,30 @@ const PHDInternational = () => {
                         { label: "To", name: "to", type: "text" },
                         { label: "Last Drawn Gross Salary (Attach Pay Slip) (Rs.) Monthly", name: "salary", type: "text" },
                         { label: "Is your father alive", name: "fatherAlive", type: "radio", options: ["Yes", "No"] },
-                        { label: "If yes, Full Name", name: "fatherName", type: "text" },
-                        { label: "Telephone No", name: "fatherPhone", type: "tel" },
-                        { label: "Mobile No", name: "fatherMobile", type: "tel" },
-                        { label: "Email", name: "fatherEmail", type: "email" },
-                        { label: "Is your Father currently employed?", name: "fatherEmployed", type: "radio", options: ["Yes", "No"] },
-                        { label: "Designation", name: "fatherDesignation", type: "text" },
-                        { label: "Date of Joining (dd/mm/yy)", name: "fatherJoiningDate", type: "date" },
-                        { label: "Full Name", name: "spouseName", type: "text" },
+                        // Conditionally include father's details if father is alive
+                        ...(formData.fatherAlive === "yes"
+                            ? [
+                                { label: "If yes, Full Name", name: "fatherName", type: "text" },
+                                { label: "Telephone No", name: "fatherPhone", type: "tel" },
+                                { label: "Mobile No", name: "fatherMobile", type: "tel" },
+                                { label: "Email", name: "fatherEmail", type: "email" },
+                                { label: "Is your Father currently employed?", name: "fatherEmployed", type: "radio", options: ["Yes", "No"] },
+                                { label: "Designation", name: "fatherDesignation", type: "text" },
+                                { label: "Date of Joining (dd/mm/yy)", name: "fatherJoiningDate", type: "date" },
+                            ]
+                            : []),
+                        // Spouse details (always shown)
+                        { label: "Spouse Full Name", name: "spouseName", type: "text" },
                         { label: "Age", name: "spouseAge", type: "text" },
                         { label: "Telephone No", name: "spousePhone", type: "tel" },
                         { label: "Mobile No", name: "spouseMobile", type: "tel" },
                         { label: "Email", name: "spouseEmail", type: "email" },
                         { label: "Is your Spouse currently employed?", name: "spouseEmployed", type: "radio", options: ["Yes", "No"] },
-                        { label: "Organization", name: "Organization", type: "text" },
+                        ...(formData.spouseEmployed === "yes"
+                            ? [
+                                { label: "Organization", name: "spouseOrganization", type: "text" },
+                            ]
+                            : []),
                     ].map((field) => (
                         <FormInput
                             key={field.name}
@@ -330,12 +353,18 @@ const PHDInternational = () => {
                 <fieldset className="border p-6 rounded-lg mb-6">
                     {[
                         { label: "1. Is the house you live in owned by your family?", name: "houseOwned", type: "radio", options: ["Yes", "No"] },
-                        { label: "If Yes, please explain:", name: "explanation", type: "textarea" },
-                        { label: "Year of Purchase:", name: "purchaseYear", type: "text" },
-                        { label: "Original Purchase Price (Rs.):", name: "originalPrice", type: "text" },
-                        { label: "Present Market Value (Rs.):", name: "presentMarketValue", type: "text" },
-                        { label: "House Plot Size (Kanals/Marlas/Sq. Feet):", name: "plotSize", type: "text" },
-                        { label: "Address:", name: "address", type: "text" },
+                        ...(
+                            formData.houseOwned === "yes"
+                                ? [
+                                    { label: "If Yes, please explain:", name: "explanation", type: "textarea" },
+                                    { label: "Year of Purchase:", name: "purchaseYear", type: "text" },
+                                    { label: "Original Purchase Price (Rs.):", name: "originalPrice", type: "text" },
+                                    { label: "Present Market Value (Rs.):", name: "presentMarketValue", type: "text" },
+                                    { label: "House Plot Size (Kanals/Marlas/Sq. Feet):", name: "plotSize", type: "text" },
+                                    { label: "Address:", name: "address", type: "text" },
+                                ]
+                                : []
+                        ),
                         { label: "2. Does your family own any other plot(s), house(s), shop(s), or land(s)?", name: "otherAssets", type: "radio", options: ["Yes", "No"] },
 
 
@@ -506,7 +535,7 @@ const PHDInternational = () => {
                     <h2 className="text-lg font-bold mb-2">Download and Upload Undertaking</h2>
                     <div className="flex flex-col  gap-4">
                         <label className="block font-medium">Download and Sign Undertaking</label>
-                        <a href="C:\Users\nidab\Downloads\Undertaking (1).pdf" target="_blank" className="text-blue-500 underline">
+                        <a href="/PHDundertaking.pdf" download target="_blank" className="text-blue-500 underline">
                             Download Undertaking
                         </a>
                         <div>
@@ -525,7 +554,7 @@ const PHDInternational = () => {
                     <h2 className="text-lg font-bold mb-2">FOR EMPLOYED APPLICANTS ONLY</h2>
                     <div className="flex flex-col gap-4">
                         <label className="block font-medium">Download NOC from Head of Department</label>
-                        <a href="C:\Users\nidab\Downloads\FOR EMPLOYED APPLICANTS ONLY NOC BY THE HEAD OF DEPARTMENT.pdf" target="_blank" className="text-blue-500 underline">
+                        <a href="/PHDNocDoc.pdf" download target="_blank" className="text-blue-500 underline">
                             Download NOC
                         </a>
                         <div>

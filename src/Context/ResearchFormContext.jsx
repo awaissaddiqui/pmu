@@ -24,14 +24,46 @@ export const ResearchFormProvider = ({ children }) => {
     // Submit function
     const submitForm = async () => {
         try {
-            console.log(formData);
+            // Check if the form is empty or any required field is missing
+            if (!formData || Object.keys(formData).length === 0 || Object.values(formData).some(value => !value)) {
+                alert("Please fill out the form before submitting.");
+                return;
+            }
+
+            // Ensure email exists before proceeding
+            if (!formData.pi_email) {
+                alert("Primary Investigator Email is required.");
+                return;
+            }
+
+            // Submit data to Firestore
             const docRef = doc(db, "research-forms", formData.pi_email);
             await setDoc(docRef, formData);
+
+            // Reset form after submission
             dispatch({ type: "RESET_FORM" });
+
+            alert("Form Submitted Successfully");
+            navigate('/');
         } catch (error) {
             console.error("Error adding document:", error);
+            alert("An error occurred while submitting the form. Please try again.");
         }
     };
+
+    // const submitForm = async () => {
+    //     try {
+    //         if (formData.length === 0) {
+    //             alert("Please fill out the form before submitting.");
+    //             return;
+    //         }
+    //         const docRef = doc(db, "research-forms", formData.pi_email);
+    //         await setDoc(docRef, formData);
+    //         dispatch({ type: "RESET_FORM" });
+    //     } catch (error) {
+    //         console.error("Error adding document:", error);
+    //     }
+    // };
 
     return (
         <ResearchFormContext.Provider value={{ formData, dispatch, submitForm }}>

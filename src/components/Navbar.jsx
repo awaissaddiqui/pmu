@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
-import Logo from "../assets/Picture1.png";
+import Logo from "../assets/Picture11.png";
 import { Link, useNavigate } from "react-router";
 
 const Navbar = () => {
@@ -56,9 +56,9 @@ const Navbar = () => {
         <nav className="bg-primary text-white p-6 w-full">
             <div className="w-full max-w-screen-xl mx-auto flex justify-between items-center flex-wrap px-4">
                 {/* Logo */}
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center">
                     <Link to='/'>
-                        <img src={Logo} alt="Logo" className="h-12 rounded-lg" />
+                        <img src={Logo} alt="Logo" className="h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20  object-contain" />
                     </Link>
                     <Link to="/">
                         <span className="text-lg whitespace-nowrap">Project Management Unit <br /> <small className="text-sm text-gray-400">Higher education department KP</small></span>
@@ -129,11 +129,11 @@ const Navbar = () => {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                        <button className="bg-white text-primary px-3 py-1 rounded-md mt-2">Search</button>
+                        <button className="bg-white text-primary w-full md:px-3 py-2 rounded-md mt-2">Search</button>
 
                         {/* Mobile Search Results */}
                         {filteredLinks.length > 0 && (
-                            <ul className="absolute top-full mt-1 w-full bg-white text-black border rounded shadow-md">
+                            <ul className="absolute  top-full mt-1 w-full bg-white text-black border rounded shadow-md">
                                 {filteredLinks.map((item) => (
                                     <li
                                         key={item.name}

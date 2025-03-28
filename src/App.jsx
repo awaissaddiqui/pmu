@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { lazy, useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router'
 import './App.css'
 import Navbar from './components/Navbar'
@@ -11,8 +11,8 @@ import Research from './Pages/Reaserch'
 import Login from './Pages/Login'
 import Admin from './Pages/Admin'
 import Footer from './components/Footer'
-import ResearchForm from './components/Forms/RegistrationForm'
-import CoverSheet from './components/Forms/CoverSheet'
+const ResearchForm = lazy(() => import('./components/Forms/RegistrationForm'))
+const CoverSheet = lazy(() => import('./components/Forms/CoverSheet'))
 import ProjectDetails_1 from './components/Forms/ProjectDetails_1'
 import ProjectDetails_2 from './components/Forms/ProjectDetails_2'
 import ProjectDetails_3 from './components/Forms/ProjectDetails_3'
@@ -35,81 +35,55 @@ import { GraduateNationalFormProvider } from './Context/GraduateNationalFormCont
 import { PHDInternationalFormProvider } from './Context/PHDInternationalFormProvider'
 import AdminGraduateNational from './Pages/AdminGraduateNational'
 import AdminPhdInternational from './Pages/AdminPhdInternational'
+import ScrollToTop from './components/ScrollToTop'
 
 
 function App() {
   return (
-    <AuthProvider> {/* Wrap the whole Router in AuthProvider */}
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/scholarships" element={<Scholarships />} />
-
-          {/* Wrap the CMEEF routes in a Fragment */}
-          <Route path="/scholarships/CMEEF/*" element={
-            <>
-              <Routes>
-                <Route path="details" element={<CMEEF />} />
-              </Routes>
-
-              {/* Move UndergraduateFormProvider OUTSIDE of Routes */}
-              <UndergraduateFormProvider>
-                <Routes>
-                  <Route path="details/UnNationalProgram" element={<UnNationalProgram />} />
-                  <Route path="details/UnNationalProgram/page2" element={<UnNationalProgramPage2 />} />
-                </Routes>
-              </UndergraduateFormProvider>
-
-              <GraduateNationalFormProvider>
-                <Routes>
-                  <Route path="details/GraduateNationalProgram" element={<GraduateNationalProgram />} />
-                </Routes>
-              </GraduateNationalFormProvider>
-
-              <PHDInternationalFormProvider>
-                <Routes>
-                  <Route path="details/PHDInternational" element={<PHDInternational />} />
-                </Routes>
-              </PHDInternationalFormProvider>
-            </>
-          } />
-
-          <Route path="/scholarships/HEEF/details" element={<HEEF />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/jobs" element={<Jobs />} />
-          <Route path="/alumni" element={<Alumni />} />
-          <Route path="/research" element={<Research />} />
-
-          {/* Research Form Provider */}
-          <Route path="/research/registration/*" element={
+    <AuthProvider>
+      <UndergraduateFormProvider>
+        <GraduateNationalFormProvider>
+          <PHDInternationalFormProvider>
             <ResearchFormProvider>
-              <Routes>
-                <Route path="/" element={<ResearchForm />} />
-                <Route path="coversheet" element={<CoverSheet />} />
-                <Route path="coversheet/details1" element={<ProjectDetails_1 />} />
-                <Route path="coversheet/details2" element={<ProjectDetails_2 />} />
-                <Route path="coversheet/details3" element={<ProjectDetails_3 />} />
-                <Route path="coversheet/details/information" element={<InformationForm />} />
-                <Route path="coversheet/details/checklist" element={<ChecklistForm />} />
-              </Routes>
+              <Router>
+                <Navbar />
+                <ScrollToTop />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/scholarships" element={<Scholarships />} />
+                  <Route path="/scholarships/CMEEF/details" element={<CMEEF />} />
+                  <Route path="/scholarships/CMEEF/details/UnNationalProgram" element={<UnNationalProgram />} />
+                  <Route path="/scholarships/CMEEF/details/UnNationalProgram/page2" element={<UnNationalProgramPage2 />} />
+                  <Route path="/scholarships/CMEEF/details/GraduateNationalProgram" element={<GraduateNationalProgram />} />
+                  <Route path="/scholarships/CMEEF/details/PHDInternational" element={<PHDInternational />} />
+                  <Route path="/scholarships/HEEF/details" element={<HEEF />} />
+                  <Route path="/projects" element={<Projects />} />
+                  <Route path="/jobs" element={<Jobs />} />
+                  <Route path="/alumni" element={<Alumni />} />
+                  <Route path="/research" element={<Research />} />
+                  <Route path="/research/registration" element={<ResearchForm />} />
+                  <Route path="/research/registration/coversheet" element={<CoverSheet />} />
+                  <Route path="/research/registration/coversheet/details1" element={<ProjectDetails_1 />} />
+                  <Route path="/research/registration/coversheet/details2" element={<ProjectDetails_2 />} />
+                  <Route path="/research/registration/coversheet/details3" element={<ProjectDetails_3 />} />
+                  <Route path="/research/registration/coversheet/details/information" element={<InformationForm />} />
+                  <Route path="/research/registration/coversheet/details/checklist" element={<ChecklistForm />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+                  <Route path="/admin/form-details/:email" element={<AdminFormDetails />} />
+                  <Route path="/admin/form-details-undergrad/:email" element={<AdminUndergradFormDetail />} />
+                  <Route path="/admin/form-details-graduate/:email" element={<AdminGraduateNational />} />
+                  <Route path="/admin/form-details-phd/:email" element={<AdminPhdInternational />} />
+                  <Route path="*" element={<Error />} />
+                </Routes>
+                <Footer />
+              </Router>
             </ResearchFormProvider>
-          } />
-
-          <Route path="/login" element={<Login />} />
-          <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-          <Route path="/admin/form-details/:email" element={<AdminFormDetails />} />
-          <Route path="/admin/form-details-undergrad/:email" element={<AdminUndergradFormDetail />} />
-          <Route path="/admin/form-details-graduate/:email" element={<AdminGraduateNational />} />
-          <Route path="/admin/form-details-phd/:email" element={<AdminPhdInternational />} />
-          <Route path="*" element={<Error />} />
-        </Routes>
-        <Footer />
-      </Router>
+          </PHDInternationalFormProvider>
+        </GraduateNationalFormProvider>
+      </UndergraduateFormProvider>
     </AuthProvider>
   );
 }
 
-
 export default App;
-

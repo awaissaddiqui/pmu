@@ -1,4 +1,5 @@
-// Input field component:
+import React from "react";
+
 const FormInput = ({ name, label, type, options, formData, handleChange }) => {
     return (
         <label className="block text-sm font-semibold">
@@ -11,7 +12,7 @@ const FormInput = ({ name, label, type, options, formData, handleChange }) => {
                                 type="radio"
                                 name={name}
                                 value={option.toLowerCase()}
-                                checked={formData[name] === option.toLowerCase()}
+                                checked={formData[name]?.toLowerCase() === option.toLowerCase()}
                                 onChange={handleChange}
                                 className="mr-1"
                             />
@@ -42,4 +43,4 @@ const FormInput = ({ name, label, type, options, formData, handleChange }) => {
     );
 };
 
-export default FormInput;
+export default React.memo(FormInput);

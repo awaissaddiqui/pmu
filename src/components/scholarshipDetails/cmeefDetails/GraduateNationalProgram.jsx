@@ -52,7 +52,7 @@ const GraduateNationalProgram = () => {
     };
 
     const handleChange = (event) => {
-        event.preventDefault();
+        // event.preventDefault();
         const { name, value, type } = event.target;
 
         dispatch({
@@ -74,7 +74,7 @@ const GraduateNationalProgram = () => {
                 <h2 className="md:text-3xl text-lg font-semibold text-center">Chief Minister Education Endowment Fund (CMEEF) Scholarships Application Form for Graduate National Program (MS/MPhil/PhD)</h2>
                 <label className="mt-6 text-xl block  font-semibold" htmlFor="">
                     Please read the instructions carefully before submitting the form.
-                    <a href="instruction.download" className='text-blue-700' download target="_blank" rel="noopener noreferrer">Download Instructions</a>
+                    <a href="/graduateInstruction.pdf" className='text-blue-700' download target="_blank" rel="noopener noreferrer">Download Instructions</a>
                 </label ><br />
 
                 {/* Remaining */}
@@ -103,9 +103,19 @@ const GraduateNationalProgram = () => {
                         { label: "Office", name: "office", type: "tel" },
                         { label: "References in Pakistan", name: "references", type: "text" },
                         { name: "marital_status", label: "Marital Status", type: "radio", options: ["Married", "Single"] },
-                        { label: "If married, please specify number of people financially dependent on you", name: "dependents", type: "text" },
+                        ...(formData.marital_status === "married"
+                            ? [
+                                { label: "If married, please specify number of people financially dependent on you", name: "dependents", type: "text" },
+                            ] : []
+                        ),
                         { name: "other_nationality", label: "Do you have any other nationality?", type: "radio", options: ["Yes", "No"] },
-                        { label: "If Yes, provide details", name: "other_nationality_details", type: "text" },
+                        ...(formData.other_nationality === "yes"
+                            ? [
+                                { label: "If Yes, provide details", name: "other_nationality_details", type: "text" },
+
+                            ] : []
+                        ),
+
                     ].map((field) => (
                         <FormInput
                             key={field.name}
@@ -115,6 +125,7 @@ const GraduateNationalProgram = () => {
                         />
                     ))}
                 </div>
+
                 <label htmlFor="attested_photo">Upload Attested Photo
                     <input
                         className="w-full p-4 border rounded-md cursor-pointer"
@@ -221,20 +232,30 @@ const GraduateNationalProgram = () => {
                         { label: "To", name: "to", type: "text" },
                         { label: "Last Drawn Gross Salary (Attach Pay Slip) (Rs.) Monthly", name: "salary", type: "text" },
                         { label: "Is your father alive", name: "fatherAlive", type: "radio", options: ["Yes", "No"] },
-                        { label: "If yes, Full Name", name: "fatherName", type: "text" },
-                        { label: "Telephone No", name: "fatherPhone", type: "tel" },
-                        { label: "Mobile No", name: "fatherMobile", type: "tel" },
-                        { label: "Email", name: "fatherEmail", type: "email" },
-                        { label: "Is your Father currently employed?", name: "fatherEmployed", type: "radio", options: ["Yes", "No"] },
-                        { label: "Designation", name: "fatherDesignation", type: "text" },
-                        { label: "Date of Joining (dd/mm/yy)", name: "fatherJoiningDate", type: "date" },
-                        { label: "Full Name", name: "spouseName", type: "text" },
+                        // Conditionally include father's details if father is alive
+                        ...(formData.fatherAlive === "yes"
+                            ? [
+                                { label: "If yes, Full Name", name: "fatherName", type: "text" },
+                                { label: "Telephone No", name: "fatherPhone", type: "tel" },
+                                { label: "Mobile No", name: "fatherMobile", type: "tel" },
+                                { label: "Email", name: "fatherEmail", type: "email" },
+                                { label: "Is your Father currently employed?", name: "fatherEmployed", type: "radio", options: ["Yes", "No"] },
+                                { label: "Designation", name: "fatherDesignation", type: "text" },
+                                { label: "Date of Joining (dd/mm/yy)", name: "fatherJoiningDate", type: "date" },
+                            ]
+                            : []),
+                        // Spouse details (always shown)
+                        { label: "Spouse Full Name", name: "spouseName", type: "text" },
                         { label: "Age", name: "spouseAge", type: "text" },
                         { label: "Telephone No", name: "spousePhone", type: "tel" },
                         { label: "Mobile No", name: "spouseMobile", type: "tel" },
                         { label: "Email", name: "spouseEmail", type: "email" },
                         { label: "Is your Spouse currently employed?", name: "spouseEmployed", type: "radio", options: ["Yes", "No"] },
-                        { label: "Organization", name: "Organization", type: "text" },
+                        ...(formData.spouseEmployed === "yes"
+                            ? [
+                                { label: "Organization", name: "spouseOrganization", type: "text" },
+                            ]
+                            : []),
                     ].map((field) => (
                         <FormInput
                             key={field.name}
@@ -303,12 +324,18 @@ const GraduateNationalProgram = () => {
                 <fieldset className="border p-6 rounded-lg mb-6">
                     {[
                         { label: "1. Is the house you live in owned by your family?", name: "houseOwned", type: "radio", options: ["Yes", "No"] },
-                        { label: "If Yes, please explain:", name: "explanation", type: "textarea" },
-                        { label: "Year of Purchase:", name: "purchaseYear", type: "text" },
-                        { label: "Original Purchase Price (Rs.):", name: "originalPrice", type: "text" },
-                        { label: "Present Market Value (Rs.):", name: "presentMarketValue", type: "text" },
-                        { label: "House Plot Size (Kanals/Marlas/Sq. Feet):", name: "plotSize", type: "text" },
-                        { label: "Address:", name: "address", type: "text" },
+                        ...(
+                            formData.houseOwned === "yes"
+                                ? [
+                                    { label: "If Yes, please explain:", name: "explanation", type: "textarea" },
+                                    { label: "Year of Purchase:", name: "purchaseYear", type: "text" },
+                                    { label: "Original Purchase Price (Rs.):", name: "originalPrice", type: "text" },
+                                    { label: "Present Market Value (Rs.):", name: "presentMarketValue", type: "text" },
+                                    { label: "House Plot Size (Kanals/Marlas/Sq. Feet):", name: "plotSize", type: "text" },
+                                    { label: "Address:", name: "address", type: "text" },
+                                ]
+                                : []
+                        ),
                         { label: "2. Does your family own any other plot(s), house(s), shop(s), or land(s)?", name: "otherAssets", type: "radio", options: ["Yes", "No"] },
 
 
@@ -321,6 +348,7 @@ const GraduateNationalProgram = () => {
                         />
                     ))}
                 </fieldset>
+
                 {/* Land Ownership Table */}
                 {
                     formData.otherAssets === "yes" && (
@@ -408,6 +436,7 @@ const GraduateNationalProgram = () => {
                     value={formData.outstanding_loans} // ✅ Bind value correctly
                     onChange={handleChange} // ✅ Update state
                 >
+                    <option disabled selected >Select</option>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                 </select>
@@ -478,7 +507,7 @@ const GraduateNationalProgram = () => {
                     <h2 className="text-lg font-bold mb-2">Download and Upload Undertaking</h2>
                     <div className="flex flex-col  gap-4">
                         <label className="block font-medium">Download and Sign Undertaking</label>
-                        <a href="C:\Users\nidab\Downloads\Undertaking (1).pdf" target="_blank" className="text-blue-500 underline">
+                        <a href="/graduateUndertakingDoc.pdf" download target="_blank" className="text-blue-500 underline">
                             Download Undertaking
                         </a>
                         <div>
@@ -497,7 +526,7 @@ const GraduateNationalProgram = () => {
                     <h2 className="text-lg font-bold mb-2">FOR EMPLOYED APPLICANTS ONLY</h2>
                     <div className="flex flex-col gap-4">
                         <label className="block font-medium">Download NOC from Head of Department</label>
-                        <a href="C:\Users\nidab\Downloads\FOR EMPLOYED APPLICANTS ONLY NOC BY THE HEAD OF DEPARTMENT.pdf" target="_blank" className="text-blue-500 underline">
+                        <a href="/graduateNocDoc.pdf" download target="_blank" className="text-blue-500 underline">
                             Download NOC
                         </a>
                         <div>

@@ -33,13 +33,13 @@ const Footer = () => {
                                 <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Follow us</h2>
                                 <ul className="text-gray-500 dark:text-gray-400 font-medium">
                                     <li className="mb-4">
-                                        <a href="https://github.com/themesberg/flowbite" className="hover:underline ">Facebook</a>
+                                        <a href="https://www.facebook.com/share/12KRjGrDMTX/?mibextid=wwXIfr" className="hover:underline ">Facebook</a>
                                     </li>
                                     <li className="mb-4">
-                                        <a href="https://discord.gg/4eeurUVvTy" className="hover:underline">Instagram</a>
+                                        <a href="https://www.instagram.com/pmu_hed?igsh=MTV0bHFkOWw2d2FjMQ==" className="hover:underline">Instagram</a>
                                     </li>
                                     <li>
-                                        <a href="https://twitter.com/themesberg" className="hover:underline">Twitter</a>
+                                        <a href="https://x.com/pmuhedkp?s=21" className="hover:underline">Twitter</a>
                                     </li>
 
                                 </ul>
