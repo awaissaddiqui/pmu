@@ -12,7 +12,10 @@ import "swiper/css/autoplay";
 // Register the trefoil loader
 trefoil.register();
 
-const Alumni = () => {
+const Alumni = ({
+    para = `The Project Management Unit takes pride in the success of its alumni.
+                    Our graduates have gone on to excel in various industries, contributing
+                    to the world of project management, education, and research.`}) => {
     const [successStories, setSuccessStories] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -35,11 +38,9 @@ const Alumni = () => {
         <div className="bg-gray-100 text-center px-6 py-10">
             {/* Section Heading */}
             <div className="max-w-3xl mx-auto">
-                <h2 className="font-bold text-3xl mb-4 text-gray-900">Our Alumni</h2>
+                <h2 className="font-bold text-3xl mb-4 text-gray-900">Success Stories</h2>
                 <p className="text-gray-600 text-lg leading-relaxed">
-                    The Project Management Unit takes pride in the success of its alumni.
-                    Our graduates have gone on to excel in various industries, contributing
-                    to the world of project management, education, and research.
+                    {para}
                 </p>
             </div>
 

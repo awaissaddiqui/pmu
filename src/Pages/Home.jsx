@@ -3,6 +3,7 @@ import Slider from '../components/Slider';
 // import HomeImg from '../assets/cr3.jpeg'
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../Firebase';
+import Alumni from './Alumni';
 // const newsItems = [
 // "New Scholarship Opportunities Available for 2025!",
 //     "Project Management Unit receives new funding for research.",
