@@ -4,13 +4,8 @@ import Slider from '../components/Slider';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../Firebase';
 import Alumni from './Alumni';
-// const newsItems = [
-// "New Scholarship Opportunities Available for 2025!",
-//     "Project Management Unit receives new funding for research.",
-//     "Upcoming Webinar on Effective Project Management.",
-//     "Alumni Reunion scheduled for March 2025.",
-//     "Call for proposals: Research on Educational Technology.",
-// ];
+import bgImage from "../assets/bgImage.jpg";
+
 
 function Home() {
     const [news, setNews] = React.useState([]);
@@ -32,12 +27,15 @@ function Home() {
     return (
         <>
             <Slider />
-            <div className="p-8 bg-[#f4f7f6]">
+            <div className="p-8 bg-[url('/bgImage.jpg')] h-[500px] md:h-[600px] lg:h-[700px] xl:h-[800px] 2xl:h-[900px] bg-cover bg-center bg-no-repeat flex items-center justify-center">
+
                 <div className="flex flex-col md:flex-row gap-6 mt-6">
                     {/* Left Section */}
-                    <div className="bg-white p-8 rounded-lg shadow-lg flex-1">
-                        <h1 className="md:text-3xl text-xl font-bold text-primary">Welcome to the Project Management Unit</h1>
-                        <p className="mt-4 text-gray-700">
+                    <div className="bg-gray-250 p-8 rounded-lg shadow-xl flex-1 backdrop-blur-md bg-opacity-10">
+                        <h1 className="md:text-3xl text-xl font-bold text-primary">
+                            Welcome to the Project Management Unit
+                        </h1>
+                        <p className="mt-4 text-gray-200  leading-relaxed">
                             The Project Management Unit (PMU) is dedicated to the effective management of projects,
                             including scholarships, educational funds, and research initiatives. Our goal is to
                             facilitate the smooth execution of various projects that contribute to the development
@@ -47,12 +45,13 @@ function Home() {
                     </div>
 
                     {/* Right Section (News & Updates) */}
-                    <div className="border-2 border-primary h-72 bg-white rounded-lg shadow-lg w-full md:w-1/2 p-4">
-                        <h2 className="text-xl font-bold text-primary text-center mb-4">News & Updates</h2>
+                    <div className="border-2 border-primary h-72 bg-gray-250 rounded-lg shadow-lg w-full md:w-1/2 p-4 backdrop-blur-md bg-opacity-10">
+                        <h2 className="text-2xl font-bold text-primary text-center mb-4">News & Updates</h2>
                         <NewsTicker news={news} />
                     </div>
                 </div>
             </div>
+
             {/* <div>
                 <img src={HomeImg} alt="Home" className="w-full h-[500px] object-cover" />
             </div> */}
@@ -68,6 +67,8 @@ function Home() {
                     <Slider isRounded='rounded-md' />
                 </div>
             </div>
+            {/* Alumni Section */}
+            <Alumni />
             {/* Vision and Mission Section */}
             <div className="flex flex-col md:flex-row gap-6 mt-6 mb-8">
                 {/* Vision Card */}
@@ -109,13 +110,13 @@ const NewsTicker = ({ news }) => {
         <div className="relative h-[220px] overflow-hidden">
             <ul className="list-none p-0 m-0 h-full animate-scroll">
                 {news.map((news, index) => (
-                    <li key={index} className="p-3 text-gray-900 text-center rounded-md">
+                    <li key={index} className="p-3  text-gray-200 text-center rounded-md">
                         {news}
                     </li>
                 ))}
                 {/* Duplicate the news items for seamless looping */}
                 {news.map((news, index) => (
-                    <li key={`duplicate-${index}`} className="p-3 text-gray-900 text-center rounded-md">
+                    <li key={`duplicate-${index}`} className="p-3  text-gray-200 text-center rounded-md">
                         {news}
                     </li>
                 ))}

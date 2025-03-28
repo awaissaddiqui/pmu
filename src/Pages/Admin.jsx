@@ -230,16 +230,26 @@ const Admin = () => {
                             <tbody>
                                 {formData.map((form) => (
                                     <tr key={form.id} className="hover:bg-gray-100">
-                                        <td className="border border-gray-300 p-2 cursor-pointer text-blue-600 underline" onClick={() => navigate(`/admin/form-details/${form.pi_email}`)}>
+                                        <td
+                                            className="border border-gray-300 p-2 cursor-pointer text-blue-600 underline"
+                                            onClick={() => navigate(`/admin/form-details/${form.pi_email}`)}
+                                        >
                                             {form.pi_email}
                                         </td>
                                         <td className="border border-gray-300 p-2">{form.title}</td>
-                                        <td className="border border-gray-300 p-2 text-center">
-                                            <button className="bg-primary text-white px-3 py-1 rounded hover:bg-secondary" onClick={() => navigate(`/admin/form-details/${form.pi_email}`)}>View</button>
+                                        <td className="border border-gray-300 p-2 text-center flex justify-center space-x-2">
+                                            <button
+                                                className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-800"
+                                                onClick={() => navigate(`/admin/form-details/${form.pi_email}`)}
+                                            >
+                                                View
+                                            </button>
+                                            <DeleteForm id={form.id} collectionName="research-forms" setState={setFormData} />
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
+
                         </table>
                     </div>
                 ) : (
@@ -269,6 +279,7 @@ const Admin = () => {
                                     <td className="border border-gray-300 p-2">{form.applicantName}</td>
                                     <td className="border border-gray-300 p-2 text-center">
                                         <button className="bg-primary cursor-pointer text-white px-3 py-1 rounded hover:bg-secondary" onClick={() => navigate(`/admin/form-details-undergrad/${form.email}`)}>View</button>
+                                        <DeleteForm id={form.id} collectionName="undergraduate-forms" setState={setFormDataUndergrad} />
                                     </td>
                                 </tr>
                             ))}
@@ -299,6 +310,7 @@ const Admin = () => {
                                     <td className="border border-gray-300 p-2">{form.full_name}</td>
                                     <td className="border border-gray-300 p-2 text-center">
                                         <button className="bg-primary cursor-pointer text-white px-3 py-1 rounded hover:bg-secondary" onClick={() => navigate(`/admin/form-details-graduate/${form.email}`)}>View</button>
+                                        <DeleteForm id={form.id} collectionName="national-graduate-form" setState={setFormDataGraduate} />
                                     </td>
                                 </tr>
                             ))}
@@ -329,6 +341,7 @@ const Admin = () => {
                                     <td className="border border-gray-300 p-2">{form.full_name}</td>
                                     <td className="border border-gray-300 p-2 text-center">
                                         <button className="bg-primary cursor-pointer text-white px-3 py-1 rounded hover:bg-secondary" onClick={() => navigate(`/admin/form-details-phd/${form.email}`)}>View</button>
+                                        <DeleteForm id={form.id} collectionName="phd-international" setState={setFormDataPhdInternational} />
                                     </td>
                                 </tr>
                             ))}
@@ -758,4 +771,60 @@ const AdminJob = () => {
         </div>
     );
 };
+
+
+
+const DeleteForm = ({ setState, collectionName, id }) => {
+    // console.log(id);
+    const [showConfirm, setShowConfirm] = useState(false);
+
+    const handleDelete = async () => {
+        try {
+            await deleteDoc(doc(db, collectionName, id));
+            setState((prev) => prev.filter((item) => item.id !== id));
+            setShowConfirm(false);
+            alert("Alumni deleted successfully!");
+        } catch (error) {
+            console.error("Error deleting alumni:", error);
+            alert("Failed to delete alumni.");
+        }
+    };
+
+    return (
+        <>
+            <button
+                className="bg-red-500 text-white cursor-pointer px-3 py-1 rounded hover:bg-red-700 ml-2"
+                onClick={() => setShowConfirm(true)}
+            >
+                Delete
+            </button>
+
+            {/* Global Modal */}
+            {showConfirm && (
+                <div className="fixed inset-0 bg-secondary bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-300 w-96">
+                        <p className="text-gray-700 text-center">Are you sure you want to delete?</p>
+                        <div className="mt-4 flex justify-end space-x-2">
+                            <button
+                                className="bg-gray-300 cursor-pointer px-4 py-2 rounded hover:bg-gray-400"
+                                onClick={() => setShowConfirm(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="bg-red-500 cursor-pointer text-white px-4 py-2 rounded hover:bg-red-700"
+                                onClick={handleDelete}
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+};
+
+
+
 

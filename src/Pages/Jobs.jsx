@@ -46,16 +46,16 @@ const Jobs = () => {
             ) : (
                 <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {jobs.map((job) => (
-                        <div key={job.id} className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition">
+                        <div key={job.id} className="bg-white shadow-lg rounded-lg p-4 border border-gray-200 hover:shadow-xl transition">
                             {job.image && (
                                 <img src={job.image} alt={job.title} className="w-full h-40 object-cover rounded-md mb-4" />
                             )}
                             <h3 className="text-xl font-semibold text-gray-900">{job.title}</h3>
                             <p className="text-gray-700 text-sm">{job.company} - {job.location}</p>
-                            <p className="text-gray-600 mt-2 text-sm">{job.description.slice(0, 100)}...</p>
-                            <button className="mt-4 w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition">
+                            <p className="text-gray-600 mt-2 text-sm">{job.description}</p>
+                            {/* <button className="mt-4 w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition">
                                 Apply Now
-                            </button>
+                            </button> */}
                         </div>
                     ))}
                 </div>
