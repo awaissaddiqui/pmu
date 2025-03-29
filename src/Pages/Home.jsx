@@ -4,7 +4,8 @@ import Slider from '../components/Slider';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../Firebase';
 import Alumni from './Alumni';
-import bgImage from "../assets/bgImage.jpg";
+import HomeNew from "../assets/HomeNew.png";
+import Homeschlorship from "../assets/Homeschlorship.jpg";
 
 
 function Home() {
@@ -26,12 +27,18 @@ function Home() {
     }, [])
     return (
         <>
-            <Slider />
-            <div className="p-8 bg-[url('/bgImage.jpg')] h-[500px] md:h-[600px] lg:h-[700px] xl:h-[800px] 2xl:h-[900px] bg-cover bg-center bg-no-repeat flex items-center justify-center">
+            {/* <Slider /> */}
+            <div>
+                <img src={HomeNew} alt="Home" className="w-full h-full object-cover" />
+            </div>
+            <div>
+                <img src={Homeschlorship} alt="Home" className="w-full h-full object-cover" />
+            </div>
+            <div className="p-8 bg-white flex items-center justify-center">
 
-                <div className="flex flex-col md:flex-row gap-6 mt-6">
-                    {/* Left Section */}
-                    <div className="bg-gray-250 p-8 rounded-lg shadow-xl flex-1 backdrop-blur-md bg-opacity-10">
+                {/* <div className="flex flex-col md:flex-row gap-6 mt-6"> */}
+                {/* Left Section */}
+                {/* <div className="bg-gray-250 p-8 rounded-lg shadow-xl flex-1 backdrop-blur-md bg-opacity-10">
                         <h1 className="md:text-3xl text-xl font-bold text-primary">
                             Welcome to the Project Management Unit
                         </h1>
@@ -42,14 +49,14 @@ function Home() {
                             of education and research in our region. Stay connected with us for the latest updates
                             and opportunities.
                         </p>
-                    </div>
+                    </div> */}
 
-                    {/* Right Section (News & Updates) */}
-                    <div className="border-2 border-primary h-72 bg-gray-250 rounded-lg shadow-lg w-full md:w-1/2 p-4 backdrop-blur-md bg-opacity-10">
-                        <h2 className="text-2xl font-bold text-primary text-center mb-4">News & Updates</h2>
-                        <NewsTicker news={news} />
-                    </div>
+                {/* Right Section (News & Updates) */}
+                <div className="border-2 border-primary h-72 bg-gray-250 rounded-lg shadow-lg w-full md:w-1/2 p-4 ">
+                    <h2 className="text-2xl font-bold text-primary text-center mb-4">News & Updates</h2>
+                    <NewsTicker news={news} />
                 </div>
+                {/* </div> */}
             </div>
 
             {/* <div>
@@ -110,13 +117,13 @@ const NewsTicker = ({ news }) => {
         <div className="relative h-[220px] overflow-hidden">
             <ul className="list-none p-0 m-0 h-full animate-scroll">
                 {news.map((news, index) => (
-                    <li key={index} className="p-3  text-gray-200 text-center rounded-md">
+                    <li key={index} className="p-3  text-gray-900 text-center rounded-md">
                         {news}
                     </li>
                 ))}
                 {/* Duplicate the news items for seamless looping */}
                 {news.map((news, index) => (
-                    <li key={`duplicate-${index}`} className="p-3  text-gray-200 text-center rounded-md">
+                    <li key={`duplicate-${index}`} className="p-3  text-gray-900 text-center rounded-md">
                         {news}
                     </li>
                 ))}
