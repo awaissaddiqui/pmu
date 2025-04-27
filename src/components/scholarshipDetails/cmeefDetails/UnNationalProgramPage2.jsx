@@ -211,6 +211,7 @@ const UnNationalProgramPage2 = () => {
         const fileName = "Undergraduate_National_Form.pdf";
         downloadPDF(formData, sections, tables, fileName);
         setShowModal(false);
+        navigate("/");
 
     };
 

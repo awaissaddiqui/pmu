@@ -6,6 +6,7 @@ import { supabaseDb } from "../../../Firebase";
 import DownloadFormData from "../../DownloadFormData";
 import { downloadPdfData } from "../../../hook/pdfGenerator";
 import Alert from "../../Alert";
+import { useNavigate } from "react-router";
 
 const GraduateNationalProgram = () => {
     const { formData, dispatch, submitForm } = useGraduateNationalForm();
@@ -13,6 +14,7 @@ const GraduateNationalProgram = () => {
     const [isFileUploaded, setIsFileUploaded] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showAlert, setShowAlert] = useState(true);
+    const navigate = useNavigate();
 
     const handleFileUpload = async (e, name) => {
         const file = e.target.files[0];
@@ -376,6 +378,7 @@ const GraduateNationalProgram = () => {
 
         downloadPdfData(formData, filename, sections, tables);
         setShowModal(false); // Close the modal after download
+        navigate("/"); // Redirect to the home page after download
     };
 
     return (

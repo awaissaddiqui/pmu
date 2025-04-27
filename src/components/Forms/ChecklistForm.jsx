@@ -4,12 +4,13 @@ import { supabaseDb } from "../../Firebase";
 import DownloadFormData from "../DownloadFormData";
 import { jsPDF } from "jspdf";
 import { autoTable } from 'jspdf-autotable'
+import { useNavigate } from "react-router";
 
 const ChecklistForm = () => {
     const { formData, dispatch, submitForm } = useResearchForm();
     const [isUploading, setIsUploading] = useState(false);
     const [showModal, setShowModal] = useState(false);
-
+    const navigate = useNavigate();
     const handleFileUpload = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -185,6 +186,7 @@ const ChecklistForm = () => {
 
         doc.save("Research_Form_Data.pdf");
         setShowModal(false);
+        navigate("/");
     };
 
 
@@ -212,7 +214,7 @@ const ChecklistForm = () => {
                                 e.preventDefault();
                                 submitForm();
                                 setShowModal(true);
-                                //  navigate('/')
+
                             }}>
 
                                 <table className="w-full border-collapse border border-gray-300">
