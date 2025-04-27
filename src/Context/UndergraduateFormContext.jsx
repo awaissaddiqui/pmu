@@ -25,9 +25,15 @@ export const UndergraduateFormProvider = ({ children }) => {
     // Submit function
     const submitForm = async () => {
         try {
-            console.log(formData);
+            if (!formData || Object.keys(formData).length === 0 || Object.values(formData).some(value => !value)) {
+                alert("❌ Please fill out all the form fields before submitting.");
+                return;
+            }
+            // console.log(formData);
+            // Check if the form is empty or any required field is missing
             const docRef = doc(db, "undergraduate-forms", formData.email);
             await setDoc(docRef, formData);
+            alert("Form Submitted Successfully");
         } catch (error) {
             console.error(error);
         }

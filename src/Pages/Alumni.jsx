@@ -71,7 +71,7 @@ const Alumni = ({ }) => {
                         {successStories.map((story, index) => (
                             <SwiperSlide
                                 key={index}
-                                className="bg-white p-8 rounded-lg shadow-lg border border-gray-300 flex flex-col items-center text-center h-ful"
+                                className="bg-white p-8 rounded-lg shadow-lg border border-gray-300 flex flex-col items-center text-center "
                             >
                                 {/* Profile Image */}
                                 <img

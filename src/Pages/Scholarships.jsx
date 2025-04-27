@@ -30,10 +30,10 @@ function Scholarships() {
                             <p className="text-gray-600 text-start leading-relaxed flex-grow">{scholarship.description}</p>
 
                             {/* Static Button at Bottom */}
-                            <div className="mt-auto w-full">
+                            <div className="mt-6 w-full ">
                                 <Link
                                     to={scholarship.link}
-                                    className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300 w-full block text-center"
+                                    className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition duration-300 w-full block text-center"
                                 >
                                     View details →
                                 </Link>

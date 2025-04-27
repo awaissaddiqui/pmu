@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router";
 import { useUndergraduateForm } from "../../../Context/UndergraduateFormContext";
 import DynamicTable from "../../DynamicTable";
 import FormInput from "../../FormInput";
+import Alert from "../../Alert";
 
 const UnNationalProgram = () => {
     const { formData, dispatch } = useUndergraduateForm();
+    const [showAlert, setShowAlert] = useState(true);
     const handleChange = (event) => {
         // event.preventDefault();
         const { name, value, type } = event.target;
@@ -18,6 +20,12 @@ const UnNationalProgram = () => {
     };
     return (
         <div className="relative flex justify-center items-center min-h-screen bg-gray-100 p-4">
+            {showAlert && (
+                <Alert
+                    string="Before filling the form, you must have admission in your desired program."
+                    onOkay={() => setShowAlert(false)} // 🛑 Close alert on Okay
+                />
+            )}
             <form className="w-full max-w-8xl bg-white shadow-lg rounded-lg p-6 space-y-4">
                 <h2 className="text-3xl font-semibold text-center">Self-Assessment Form</h2>
 

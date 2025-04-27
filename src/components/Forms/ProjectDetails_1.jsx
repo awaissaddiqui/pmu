@@ -14,7 +14,7 @@ const ProjectDetails_1 = () => {
         <div className="max-w-full mx-auto">
             <h2 className="text-3xl p-6 font-semibold text-primary text-start">Project Details</h2>
             <form className="relative bg-opacity-50 space-y-4 grid grid-cols-1 md:grid-cols-3 gap-4 p-6 rounded-lg shadow-lg h-full w-full max-w-full pb-20">
-                
+
                 {/* Text Areas for Detailed Inputs */}
                 {[
                     "project_summary", "goals_objectives", "hypothesis", "applied_goals",
@@ -34,7 +34,12 @@ const ProjectDetails_1 = () => {
 
                 {/* Submit Button */}
                 <div className="flex justify-end mt-6 md:absolute md:bottom-4 md:right-4 w-full">
-                    <Button nextString="/research/registration/coversheet/details2" />
+                    <Button nextString="/research/registration/coversheet/details2" requiredFields={
+                        [
+                            "project_summary", "goals_objectives", "hypothesis", "applied_goals",
+                            "introduction", "justification", "research_plan", "references"
+                        ]
+                    } />
                 </div>
             </form>
         </div>

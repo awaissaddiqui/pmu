@@ -174,6 +174,32 @@ const Admin = () => {
             {/* News Section */}
             <div className="w-full mx-auto bg-white shadow-lg rounded-lg p-6 mt-6">
                 <h2 className="text-3xl font-semibold mb-4 text-gray-900">Latest News</h2>
+                <div className="flex justify-end mb-6">
+                    {!isEditing ? (
+                        <button
+                            onClick={() => setIsEditing(true)}
+                            className="bg-primary text-white p-2 rounded-lg w-full md:w-40 hover:bg-secondary transition"
+                        >
+                            Edit
+                        </button>
+                    ) : (
+                        <button
+                            onClick={async () => {
+                                try {
+                                    const docRef = doc(db, "pmuAdminData", "newsData");
+                                    await updateDoc(docRef, { news: editedNews });
+                                    setNews(editedNews);
+                                    setIsEditing(false);
+                                } catch (error) {
+                                    console.log("Error updating news:", error);
+                                }
+                            }}
+                            className="bg-secondary text-white p-2 rounded-lg w-full md:w-40 hover:bg-green-600 transition"
+                        >
+                            Submit
+                        </button>
+                    )}
+                </div>
                 <ul className="space-y-3">
                     {news.length > 0 ? news.map((item, index) => (
                         <li key={index} className="bg-gray-200 p-3 rounded-lg shadow-md">
@@ -194,24 +220,7 @@ const Admin = () => {
                         </li>
                     )) : <p className="text-gray-500">No news available.</p>}
                 </ul>
-                {!isEditing ? (
-                    <button onClick={() => setIsEditing(true)} className="bg-primary text-white p-2 rounded-lg w-full md:w-40 text-center mt-6 mx-auto   block hover:bg-secondary transition">
-                        Edit
-                    </button>
-                ) : (
-                    <button onClick={async () => {
-                        try {
-                            const docRef = doc(db, "pmuAdminData", "newsData");
-                            await updateDoc(docRef, { news: editedNews });
-                            setNews(editedNews);
-                            setIsEditing(false);
-                        } catch (error) {
-                            console.log("Error updating news:", error);
-                        }
-                    }} className="bg-green-500 text-white p-2 rounded-lg w-full md:w-40 text-center mt-4 mx-auto block hover:bg-green-600 transition">
-                        Submit
-                    </button>
-                )}
+
             </div>
 
             {/* Research Forms Data Section */}
@@ -239,7 +248,7 @@ const Admin = () => {
                                         <td className="border border-gray-300 p-2">{form.title}</td>
                                         <td className="border border-gray-300 p-2 text-center flex justify-center space-x-2">
                                             <button
-                                                className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-800"
+                                                className="bg-primary text-white px-3 py-1 rounded hover:bg-primary"
                                                 onClick={() => navigate(`/admin/form-details/${form.pi_email}`)}
                                             >
                                                 View
@@ -406,6 +415,15 @@ const AlumniTable = () => {
     return (
         <div id='alumni' className="w-full mx-auto p-6 bg-white shadow-lg rounded-lg mt-6">
             <h2 className="text-3xl font-semibold mb-4 text-gray-900">Alumni List</h2>
+            {/* Add New Button */}
+            <div className="m-6  flex justify-end">
+                <button
+                    onClick={() => setModalOpen(true)} // ✅ Open modal
+                    className="bg-primary w-full md:w-36 text-white px-6 py-2 rounded-md font-semibold hover:bg-secondary transition"
+                >
+                    Add New
+                </button>
+            </div>
 
             {loading ? (
                 <p className="text-center text-gray-600">Loading alumni...</p>
@@ -447,15 +465,7 @@ const AlumniTable = () => {
                 </div>
             )}
 
-            {/* Add New Button */}
-            <div className="mt-6  flex justify-end">
-                <button
-                    onClick={() => setModalOpen(true)} // ✅ Open modal
-                    className="bg-primary w-full md:w-36 text-white px-6 py-2 rounded-md font-semibold hover:bg-secondary transition"
-                >
-                    Add New
-                </button>
-            </div>
+
 
             {/* ✅ Modal Component */}
             {modalOpen && (
@@ -500,10 +510,10 @@ const AdminNavbar = ({ handleLogout }) => {
 
     return (
         <nav className="bg-gray-200 shadow-md p-4 rounded-lg mb-6 sticky top-0 z-50">
-            <div className="max-w-6xl mx-auto flex justify-between items-center">
+            <div className="w-full mx-auto flex justify-between items-center">
                 {/* Logo / Title */}
                 <a onClick={(e) => handleSmoothScroll(e, "dashboard")} href="#dashboard" className="flex items-center space-x-2 cursor-pointer">
-                    <p className="text-2xl font-bold text-blue-600" >PMU Admin Dashboard</p>
+                    <p className="text-2xl font-bold text-secondary" >PMU Admin Dashboard</p>
                 </a>
 
                 {/* Desktop Menu */}
@@ -670,51 +680,6 @@ const AdminJob = () => {
 
             {/* Add Job Form */}
             <form className="space-y-6 mt-6" onSubmit={handleAddJob}>
-                <input
-                    type="text"
-                    name="title"
-                    value={jobData.title}
-                    onChange={handleChange}
-                    placeholder="Job Title"
-                    className="w-full p-2 border border-gray-700 rounded-lg"
-                />
-                {/* image upload */}
-                <div className="w-full">
-                    <label className="block text-gray-700 font-medium mb-2">Upload Image</label>
-
-                    {/* Hidden File Input */}
-                    <input
-                        type="file"
-                        name="image"
-                        accept="image/*"
-                        id="fileInput"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                    />
-
-                    {/* Custom File Upload Button */}
-                    <label
-                        htmlFor="fileInput"
-                        className="w-full flex items-center justify-center gap-2 cursor-pointer p-3 rounded-lg border border-gray-700 bg-gray-100 text-gray-800 hover:bg-gray-200 transition"
-                    >
-                        📤 Upload Image
-                    </label>
-
-                    {/* Show selected file name */}
-                    {jobData.image && (
-                        <p className="mt-2 text-sm text-gray-600">
-                            Image uploaded for : <span className="font-medium">{jobData.title}</span>
-                        </p>
-                    )}
-                </div>
-                <textarea
-                    name="description"
-                    value={jobData.description}
-                    onChange={handleChange}
-                    placeholder="Job Description"
-                    rows="3"
-                    className="w-full p-2 border border-gray-700 rounded-lg"
-                ></textarea>
                 <div className="flex justify-end">
                     {
                         loading ? (
@@ -742,10 +707,60 @@ const AdminJob = () => {
                         Add Job
                     </button> */}
                 </div>
+                <input
+                    type="text"
+                    name="title"
+                    value={jobData.title}
+                    onChange={handleChange}
+                    placeholder="Job Title"
+                    required
+                    className="w-full p-2 border border-gray-700 rounded-lg"
+                />
+                {/* image upload */}
+                <div className="w-full">
+                    <label className="block text-gray-700 font-medium mb-2">Upload Image</label>
+
+                    {/* Hidden File Input */}
+                    <input
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                        id="fileInput"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        required
+                    />
+
+                    {/* Custom File Upload Button */}
+                    <label
+                        htmlFor="fileInput"
+                        className="w-full flex items-center justify-center gap-2 cursor-pointer p-3 rounded-lg border border-gray-700 bg-gray-100 text-gray-800 hover:bg-gray-200 transition"
+                    >
+                        📤 Upload Image
+                    </label>
+
+                    {/* Show selected file name */}
+                    {jobData.image && (
+                        <p className="mt-2 text-sm text-gray-600">
+                            Image uploaded for : <span className="font-medium">{jobData.title}</span>
+                        </p>
+                    )}
+                </div>
+                <textarea
+                    name="description"
+                    value={jobData.description}
+                    onChange={handleChange}
+                    placeholder="Job Description"
+                    rows="3"
+                    required
+                    className="w-full p-2 border border-gray-700 rounded-lg"
+                ></textarea>
+
             </form>
 
+
             {/* Job List */}
-            <h3 className="text-2xl font-semibold mb-4 text-gray-900">Job Listings</h3>
+            <h3 className="text-2xl font-semibold mt-8 mb-6 text-gray-900">Job Listings</h3>
             {loading ? (
                 <p className="text-center text-gray-600">Loading jobs...</p>
             ) : jobs.length > 0 ? (

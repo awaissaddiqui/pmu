@@ -5,6 +5,7 @@ import { doc, setDoc } from "firebase/firestore";
 // Create the context
 const ResearchFormContext = createContext();
 
+
 // Reducer function to handle form state updates
 const researchFormReducer = (state, action) => {
     switch (action.type) {
@@ -26,7 +27,7 @@ export const ResearchFormProvider = ({ children }) => {
         try {
             // Check if the form is empty or any required field is missing
             if (!formData || Object.keys(formData).length === 0 || Object.values(formData).some(value => !value)) {
-                alert("Please fill out the form before submitting.");
+                alert("❌ Please fill out all the form fields before submitting.");
                 return;
             }
 
@@ -40,30 +41,15 @@ export const ResearchFormProvider = ({ children }) => {
             const docRef = doc(db, "research-forms", formData.pi_email);
             await setDoc(docRef, formData);
 
-            // Reset form after submission
-            dispatch({ type: "RESET_FORM" });
-
             alert("Form Submitted Successfully");
-            navigate('/');
+            // Reset form after submission
+            // dispatch({ type: "RESET_FORM" });
+            // console.log(formData);
         } catch (error) {
-            console.error("Error adding document:", error);
+            console.error(error);
             alert("An error occurred while submitting the form. Please try again.");
         }
     };
-
-    // const submitForm = async () => {
-    //     try {
-    //         if (formData.length === 0) {
-    //             alert("Please fill out the form before submitting.");
-    //             return;
-    //         }
-    //         const docRef = doc(db, "research-forms", formData.pi_email);
-    //         await setDoc(docRef, formData);
-    //         dispatch({ type: "RESET_FORM" });
-    //     } catch (error) {
-    //         console.error("Error adding document:", error);
-    //     }
-    // };
 
     return (
         <ResearchFormContext.Provider value={{ formData, dispatch, submitForm }}>

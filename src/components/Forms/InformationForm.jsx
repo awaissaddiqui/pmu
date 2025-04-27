@@ -59,7 +59,13 @@ const InformationForm = () => {
 
                 {/* Button Container */}
                 <div className="flex justify-end mt-6 md:absolute md:bottom-4 md:right-4 w-full">
-                    <Button nextString="/research/registration/coversheet/details/checklist" />
+                    <Button nextString="/research/registration/coversheet/details/checklist" requiredFields={
+                        [
+                            "question_1", "question_2", "question_3", "question_4",
+                            "question_5", "question_6", "question_7", "question_8",
+                            "question_9"
+                        ]
+                    } />
                 </div>
             </form>
         </div>

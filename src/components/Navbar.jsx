@@ -54,14 +54,14 @@ const Navbar = () => {
 
     return (
         <nav className="bg-primary text-white p-6 w-full">
-            <div className="w-full max-w-screen-xl mx-auto flex justify-between items-center flex-wrap px-4">
+            <div className="w-full  mx-auto flex justify-between items-center sm:flex-wrap px-4">
                 {/* Logo */}
                 <div className="flex items-center">
                     <Link to='/'>
                         <img src={Logo} alt="Logo" className="h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20  object-contain" />
                     </Link>
                     <Link to="/">
-                        <span className="text-lg whitespace-nowrap">Project Management Unit <br /> <small className="text-sm text-gray-400">Higher Education Department KP</small></span>
+                        <span className="text-lg whitespace-nowrap">Project Management Unit <br /> <small className="text-sm text-white">Higher Education Department KP</small></span>
                     </Link>
                 </div>
 

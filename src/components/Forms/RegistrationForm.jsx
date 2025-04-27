@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useResearchForm } from "../../Context/ResearchFormContext";
 import Button from "./Button";
+import Alert from "../Alert";
 
 const RegistrationForm = () => {
     const { formData, dispatch } = useResearchForm();
+    const [showAlert, setShowAlert] = useState(true);
 
     // Handle form input changes
     const handleChange = (e) => {
@@ -12,6 +14,12 @@ const RegistrationForm = () => {
 
     return (
         <div className="relative bg-opacity-50 flex justify-center items-center z-10 overflow-y-auto min-h-screen">
+            {showAlert && (
+                <Alert
+                    string="Before filling the form, you must have admission in your desired program."
+                    onOkay={() => setShowAlert(false)} // 🛑 Close alert on Okay
+                />
+            )}
             <form className="relative bg-opacity-50 space-y-4 grid grid-cols-1 md:grid-cols-3 gap-4 p-6 rounded-lg shadow-lg h-full w-full max-w-full pb-20">
                 <h2 className="text-3xl font-semibold mb-4 col-span-full">HREF Registration Form</h2>
 
@@ -282,7 +290,13 @@ const RegistrationForm = () => {
 
                 {/* Buttons Container */}
                 <div className="flex justify-end mt-6 md:absolute md:bottom-4 md:right-4 w-full">
-                    <Button nextString="/research/registration/coversheet" />
+                    <Button nextString="/research/registration/coversheet" requiredFields={[
+                        "title", "subject", "major_field", "minor_field", "funds_requested",
+                        "duration", "location", "start_date", "turnitin_index",
+                        "pi_name", "pi_province", "pi_university", "pi_designation",
+                        "pi_status", "pi_department", "pi_office_address",
+                        "pi_cnic", "pi_email", "pi_phone", "beneficiary_sector"
+                    ]} backBtnDisable={true} />
                 </div>
             </form>
         </div>

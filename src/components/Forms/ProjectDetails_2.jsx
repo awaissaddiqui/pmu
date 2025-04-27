@@ -42,7 +42,12 @@ const ProjectDetails_2 = () => {
 
                 {/* Next Button */}
                 <div className="flex justify-end mt-6 md:absolute md:bottom-4 md:right-4 w-full">
-                    <Button nextString="/research/registration/coversheet/details3" />
+                    <Button nextString="/research/registration/coversheet/details3" requiredFields={
+                        [
+                            "impact", "dev_strategy", "collaborators", "facilities",
+                            "additional_equipment", "available_personnel", "required_personnel"
+                        ]
+                    } />
                 </div>
 
             </form>

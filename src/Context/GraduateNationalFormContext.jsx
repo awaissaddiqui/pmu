@@ -21,7 +21,7 @@ export const GraduateNationalFormProvider = ({ children }) => {
 
     const submitForm = async () => {
         try {
-            console.log(formData);
+            // console.log(formData);
             const docRef = await doc(db, "national-graduate-form", formData.email);
             await setDoc(docRef, formData);
             // dispatch({ type: "RESET_FORM" });

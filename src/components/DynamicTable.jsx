@@ -32,15 +32,15 @@ const DynamicTable = ({ firstColumnTitle, headers, numRows, tableTitle, dispatch
         <div className="overflow-x-auto">
             <table className="w-full border-collapse border border-gray-300">
                 <thead>
-                    <tr className="bg-gray-200">
+                    <tr className="bg-secondary text-white">
                         {/* First column title */}
-                        <th className="border border-gray-300 px-4 py-2">
+                        <th className="border border-secondary px-4 py-2">
                             {typeof firstColumnTitle === "string" ? firstColumnTitle : headers[0]}
                         </th>
 
                         {/* Remaining headers */}
                         {headers.slice(1).map((header, index) => (
-                            <th key={index} className="border border-gray-300 px-4 py-2">{header}</th>
+                            <th key={index} className="border border-secondary px-4 py-2">{header}</th>
                         ))}
                     </tr>
                 </thead>

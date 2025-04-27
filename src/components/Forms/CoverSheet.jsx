@@ -1,28 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useResearchForm } from "../../Context/ResearchFormContext";
 import Button from './Button';
 import { supabaseDb } from '../../Firebase';
 
 const CoverSheet = () => {
     const { formData, dispatch } = useResearchForm();
+    const [isUploading, setIsUploading] = useState(false);
     // Handle File Upload
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+        setIsUploading(true);
+        document.body.style.cursor = "wait";
 
         try {
             const { data, error } = await supabaseDb.storage.from('pmu_forms').upload(`${formData.pi_email}/signed_declaration_file`, file);
             if (error) throw error;
             const downloadURL = await supabaseDb.storage.from('pmu_forms').getPublicUrl(`${formData.pi_email}/signed_declaration_file`);
-            // Update global state with file URL
+
             dispatch({
                 type: "UPDATE_FIELD",
                 field: "upload_signed_declaration",
                 value: downloadURL.data.publicUrl
             });
 
+
+
+
         } catch (error) {
-            console.error("Storage Error:", error);
+            console.error(error);
+        } finally {
+            setIsUploading(false);
+            document.body.style.cursor = "default";
         }
     };
 
@@ -74,21 +83,50 @@ const CoverSheet = () => {
 
                 {/* Upload Signed Declaration */}
                 <div className="col-span-full">
-                    <label className="block text-sm font-semibold">Upload Signed Declaration</label>
+                    <label className="block text-sm font-semibold mb-2">Upload Signed Declaration</label>
+
+                    <div className="flex items-center space-x-4">
+                        <label
+                            htmlFor="upload_signed_declaration"
+                            className="cursor-pointer bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition"
+                        >
+                            Choose File
+                        </label>
+                        <span className="text-gray-600 text-sm">
+                            {formData.upload_signed_declaration?.name || "No file chosen"}
+                        </span>
+                    </div>
+
                     <input
+                        id="upload_signed_declaration"
                         type="file"
                         name="upload_signed_declaration"
                         onChange={handleFileUpload}
-                        className="w-full p-2 border rounded-md mt-2"
+                        className="hidden"
                         required
                     />
+
                     {formData.upload_signed_declaration && (
-                        <p className="text-green-600 mt-2">File Uploaded Successfully</p>
+                        <p className="text-green-600 mt-2 font-medium">
+                            ✅ File Uploaded Successfully
+                        </p>
                     )}
                 </div>
 
+
                 <div className="flex justify-end mt-6 md:absolute md:bottom-4 md:right-4 w-full">
-                    <Button nextString="/research/registration/coversheet/details1" />
+                    <Button nextString="/research/registration/coversheet/details1" requiredFields={[
+                        "proposal_domain", "research_area", "research_subject", "specialization_field", "sub_specialization",
+                        "research_location", "requested_funding", "project_duration", "project_start_date", "project_end_date",
+                        "principal_investigator_name", "principal_investigator_degree", "principal_investigator_position",
+                        "principal_investigator_department", "principal_investigator_university", "principal_investigator_cnic",
+                        "principal_investigator_domicile", "principal_investigator_address", "principal_investigator_email",
+                        "principal_investigator_phone", "co_principal_investigator_name", "co_principal_investigator_degree",
+                        "co_principal_investigator_position", "co_principal_investigator_department",
+                        "co_principal_investigator_university", "co_principal_investigator_cnic", "co_principal_investigator_domicile",
+                        "co_principal_investigator_address", "co_principal_investigator_email", "co_principal_investigator_phone",
+                        "upload_signed_declaration"
+                    ]} />
                 </div>
 
             </form>
