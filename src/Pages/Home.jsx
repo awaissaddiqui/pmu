@@ -4,7 +4,7 @@ import Slider from '../components/Slider';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../Firebase';
 import Alumni from './Alumni';
-import HomeNew from "../assets/HomeNew.png";
+import HomeNew from "../assets/HomeNew2.jpeg";
 import Homeschlorship from "../assets/Homeschlorship.jpg";
 
 
