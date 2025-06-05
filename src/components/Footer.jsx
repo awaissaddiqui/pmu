@@ -16,7 +16,7 @@ const Footer = () => {
                                 />
                                 <span className="text-2xl font-semibold text-white">
                                     Project Management Unit <br></br>
-                                    <span className="text-white text-lg">Higher Education Department KPK</span>
+                                    <span className="text-white text-lg">Higher Education Department KP</span>
 
                                 </span>
                             </Link>

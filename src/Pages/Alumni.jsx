@@ -27,8 +27,9 @@ const Alumni = ({ }) => {
                 const querySnapshot = await getDocs(collection(db, "pmu-alumni"));
                 const data = querySnapshot.docs.map((doc) => doc.data());
                 setSuccessStories(data);
+                console.log(data)
             } catch (error) {
-                console.error("Error fetching success stories:", error);
+                console.error(error);
             } finally {
                 setLoading(false);
             }
@@ -69,6 +70,7 @@ const Alumni = ({ }) => {
                         className="py-4"
                     >
                         {successStories.map((story, index) => (
+
                             <SwiperSlide
                                 key={index}
                                 className="bg-white p-8 rounded-lg shadow-lg border border-gray-300 flex flex-col items-center text-center "

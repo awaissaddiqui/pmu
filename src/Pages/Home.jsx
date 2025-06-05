@@ -27,10 +27,10 @@ function Home() {
     }, [])
     return (
         <>
-            {/* <Slider /> */}
-            <div>
+            <Slider />
+            {/* <div>
                 <img src={HomeNew} alt="Home" className="w-full h-full object-cover" />
-            </div>
+            </div> */}
             <div>
                 <img src={Homeschlorship} alt="Home" className="w-full h-full object-cover" />
             </div>
