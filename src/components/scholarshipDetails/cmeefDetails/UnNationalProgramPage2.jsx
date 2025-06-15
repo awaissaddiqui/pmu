@@ -45,13 +45,15 @@ const UnNationalProgramPage2 = () => {
         }
     };
 
-    const handleTableChange = (event) => {
+    const handleTableChange = (event, field) => {
         const { name, value } = event.target;
 
         dispatch({
             type: "UPDATE_FIELD",
-            field: "income_expenditure",
-            value: { ...formData.income_expenditure, [name]: value },
+            field: field || name,
+            // Update the income_expenditure object with the new value
+            value: { ...formData[field || name], [name]: value },
+            // value: { ...formData.income_expenditure, [name]: value },
         });
     };
 
@@ -82,7 +84,7 @@ const UnNationalProgramPage2 = () => {
             },
             {
                 title: "Family Complete Details (Income, Accommodation, etc.)",
-                keys: ["familyMemberEarningDetails", "totalMonthlyIncome", "familyMembersStudying", "type", "status", "rentPayment", "housePlotSize", "coveredArea"]
+                keys: ["familyMemberLivingWithYou", "totalMonthlyIncome", "familyMembersStudying", "type", "status", "rentAmount", "housePlotSize", "coveredArea"]
             },
             {
                 title: "Father / Guardian Details",
@@ -130,6 +132,11 @@ const UnNationalProgramPage2 = () => {
                 tableTitle: "FamilyMembersEducationDetails",
                 headers: ["#", "Name", "Relationship", "Institution Name", "Fee per Month"]
             },
+            {
+                title: "Utility Expenditure",
+                tableTitle: "utilityExpenditure",
+                headers: ["Utility Type", "Last Month Utilities Paid (PKR)"]
+            }
             , {
                 title: "Income and Expenditure",
                 tableTitle: "income_expenditure",
@@ -240,6 +247,42 @@ const UnNationalProgramPage2 = () => {
 
                                 }
                                 }>
+                                {/* Utility Expenditure */}
+                                <h2 className="text-2xl font-bold mb-4">Utilities Expenditure</h2>
+                                <div className="mb-6 overflow-x-auto">
+                                    <table className="w-full border border-gray-300 mb-6">
+                                        <thead>
+                                            <tr className="bg-secondary text-white ">
+                                                <th className="p-2 border">Utility Type</th>
+                                                <th className="p-2 border">Last Month Utilities Paid (PKR)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {[
+                                                { id: "Electricity Bill" },
+                                                { id: "Internet Bill" },
+                                                { id: "Gas Bill" },
+                                                { id: "Water Bill" },
+                                                { id: "Telephone Bill" },
+                                            ].map((item, index) => (
+                                                <tr key={index} className="text-center border">
+                                                    <td className="p-2 border">{item.id}</td>
+                                                    <td className="p-2 border">
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            className="w-full p-2 border rounded"
+                                                            placeholder="Enter Amount"
+                                                            name={item.id}
+                                                            value={formData.utilityExpenditure?.[item.id] || ""}
+                                                            onChange={(e) => handleTableChange(e, "utilityExpenditure")}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                                 {/* Income and Expenditure Table */}
                                 <h2 className="text-xl font-bold mb-4">Income & Expenditure</h2>
 
@@ -272,7 +315,7 @@ const UnNationalProgramPage2 = () => {
                                                             placeholder="Enter Amount"
                                                             name={item.id}
                                                             value={formData.income_expenditure?.[item.id] || ""}
-                                                            onChange={handleTableChange}
+                                                            onChange={(e) => handleTableChange(e, "income_expenditure")}
                                                         />
                                                     </td>
                                                 </tr>
@@ -400,7 +443,7 @@ const UnNationalProgramPage2 = () => {
 
                                 {/* Loan for applicant eduction */}
 
-                                <h2 className="text-xl mt-4 font-semibold ">Loan taken for Applicant Education </h2>
+                                <h2 className="text-xl mt-4  font-semibold ">Loan taken for Applicant Education </h2>
                                 {[
                                     { name: "familyLoan", label: "Family/ Friend Loan (Specify details of loan taken and relationship with the relative / friend)" },
                                     { name: "sourceFinancing", label: "Any source of financing other than loan (Please specify)" },
@@ -472,6 +515,7 @@ const UnNationalProgramPage2 = () => {
                                             tableTitle="scholarshipsDetails"
                                             firstColumnTitle="#"
                                             headers={[
+                                                "",
                                                 "Name of institute",
                                                 "Scholarship Name",
                                                 "Total Scholarship Amount",

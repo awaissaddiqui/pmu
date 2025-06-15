@@ -7,6 +7,7 @@ import DownloadFormData from "../../DownloadFormData";
 import { downloadPdfData } from "../../../hook/pdfGenerator";
 import Alert from "../../Alert";
 import { useNavigate } from "react-router";
+import { domiciles } from "../../../utils/data";
 
 
 const PHDInternational = () => {
@@ -194,6 +195,12 @@ const PHDInternational = () => {
                 firstColumn: ['SSC/Matric', 'HSSC/Intermediate', 'Bachelors (B.A, BSc, Hons. etc.)', 'Masters or Equivalent', 'M. Phil', 'GRE/GAT (Subject/General)', 'Medals (Gold/Silver/Bronze)', 'Other (please specify)'],
             },
             {
+                title: "Research Publications",
+                tableTitle: "researchPublications",
+                headers: ["S.No", "Title of Research Paper", "Area of Research", "Published in international/Local/Journal (Full name of Journal)", "Date of Publication", "Impact factor of Journal in which your Paper was Published"],
+                firstColumn: ["#"]
+            },
+            {
                 title: "Detail of Courses opted at MS/MPhil/PhD Level",
                 tableTitle: "detail_of_courses_ms_level",
                 headers: ["", "Course Name", "Date/Semester", "Course Type (Core/Elective)", "Total Credits"],
@@ -207,7 +214,7 @@ const PHDInternational = () => {
             {
                 title: "Total Income",
                 tableTitle: "total_income",
-                headers: ["Particulars", "Monthly Salary", "From other sources if any", "Total"],
+                headers: ["Particulars", "Annual Salary", "From other sources if any", "Total"],
                 firstColumn: ["Father", "Mother", "Guardian", "Self", "Spouse", "Others"],
             },
             {
@@ -220,7 +227,7 @@ const PHDInternational = () => {
                 title: "Individual Assets",
                 tableTitle: "individual_assets",
                 headers: ["Particulars", "Business", "Savings and Investments", "Land and Building", "Agricultural Land", "Area/location of  Agricultural Land"],
-                firstColumn: ["Plots", "Houses", "Buildings", "Land", "Others (Specify)"],
+                firstColumn: ["Father/Guardian", "Mother/Guardian", "Self", "Spouse", "Others (Specify)"],
             },
             {
                 title: 'Average Family Expenses',
@@ -372,7 +379,32 @@ const PHDInternational = () => {
                                     { label: "Passport No", name: "passport_no", type: "text" },
                                     { label: "Passport Expiry Date", name: "passport_expiry_date", type: "date" },
                                     { label: "Date of Birth", name: "dob", type: "date" },
-                                    { label: "Domicile", name: "domicile", type: "text" },
+                                    // { label: "Domicile", name: "domicile", type: "text" },
+                                ].map((field) => (
+                                    <FormInput
+                                        key={field.name}
+                                        {...field}
+                                        formData={formData}
+                                        handleChange={handleChange}
+                                    />
+                                ))}
+                                {/* Domicile Dropdown */}
+                                <label className="w-full">
+                                    <select
+                                        name="domicile"
+                                        value={formData.domicile || ""}
+                                        onChange={handleChange}
+                                        className="w-full p-2 border rounded-md"
+                                    >
+                                        <option value="" disabled>Select Domicile</option>
+                                        {domiciles.map((dom, idx) => (
+                                            <option key={idx} value={dom}>
+                                                {dom}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </label>
+                                {[
                                     { name: "gender", label: "Gender", type: "radio", options: ["Male", "Female"] },
                                     { label: "Age on closing date for admission", name: "age", type: "number" },
                                     { label: "Mailing Address", name: "mailing_address", type: "text" },
@@ -514,6 +546,19 @@ const PHDInternational = () => {
                                     </div>
                                 </div>
                             </div>
+                            {/* Research Publications */}
+                            <div className="mt-6 overflow-x-auto">
+                                <strong>Research Publications</strong>
+                                <DynamicTable
+                                    tableTitle={"researchPublications"}
+                                    headers={["S.No", "Title of Research Paper", "Area of Research", "Published in international/Local/Journal (Full name of Journal)", "Date of Publication", "Impact factor of Journal in which your Paper was Published"]}
+                                    dispatch={dispatch}
+                                    firstColumnTitle={"#"}
+                                    numRows={6}
+                                />
+                            </div>
+
+
                             {/* Courses Table */}
                             <div className="mt-6 overflow-x-auto">
                                 <strong>Detail of Courses opted at MS/MPhil/PhD Level</strong>
@@ -576,6 +621,122 @@ const PHDInternational = () => {
                                 {[
                                     { label: "From", name: "from", type: "text" },
                                     { label: "To", name: "to", type: "text" },
+                                    {
+                                        label:
+                                            "Last Drawn Gross Salary (Attach Pay Slip) (Rs.) Monthly",
+                                        name: "salary",
+                                        type: "text",
+                                    },
+
+                                ].map((field) => (
+                                    <FormInput
+                                        key={field.name}
+                                        {...field}
+                                        formData={formData}
+                                        handleChange={handleChange}
+                                    />
+                                ))}
+                            </div>
+                            {/* Family Information */}
+                            <h2 className="text-xl font-bold mb-4">Family Information</h2>
+                            <h5 className="text-lg font-bold mb-4">Father Information</h5>
+                            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+                                {[
+                                    {
+                                        label: "Full Name of Father",
+                                        label: "fatherName",
+                                        type: "text"
+                                    },
+                                    {
+                                        label: "Is your father alive",
+                                        name: "fatherAlive",
+                                        type: "radio",
+                                        options: ["Yes", "No"],
+                                    },
+                                    // Conditionally include father's details if father is alive
+                                    ...(formData.fatherAlive === "yes"
+                                        ? [
+                                            {
+                                                label: "Telephone No",
+                                                name: "fatherPhone",
+                                                type: "tel",
+                                            },
+                                            { label: "Mobile No", name: "fatherMobile", type: "tel" },
+                                            { label: "Email", name: "fatherEmail", type: "email" },
+                                        ]
+                                        : []),
+                                    {
+                                        label: "Is your Father currently employed?",
+                                        name: "fatherEmployed",
+                                        type: "radio",
+                                        options: ["Yes", "No"],
+                                    },
+                                    ...(formData.fatherEmployed === "yes"
+                                        ? [
+                                            {
+                                                label: "Designation",
+                                                name: "fatherDesignation",
+                                                type: "text",
+                                            },
+                                            {
+                                                label: "Date of Joining (dd/mm/yy)",
+                                                name: "fatherJoiningDate",
+                                                type: "date",
+                                            }] : []
+                                    ),
+                                ].map((field) => (
+                                    <FormInput
+                                        key={field.name}
+                                        {...field}
+                                        formData={formData}
+                                        handleChange={handleChange}
+                                    />
+                                ))
+                                }
+                            </div>
+                            <h5 className="text-lg font-bold mb-4">Spouse Information</h5>
+                            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+                                {/* spouse information */}
+                                {[ // Spouse details (always shown)
+                                    { label: "Are you Married", name: "spouseMarried", type: "radio", options: ["Yes", "No"] },
+                                    ...(formData.spouseMarried === "yes" ?
+                                        [
+                                            { label: "Spouse Full Name", name: "spouseName", type: "text" },
+                                            { label: "Age", name: "spouseAge", type: "text" },
+                                            { label: "Telephone No", name: "spousePhone", type: "tel" },
+                                            { label: "Mobile No", name: "spouseMobile", type: "tel" },
+                                            { label: "Email", name: "spouseEmail", type: "email" },
+                                            {
+                                                label: "Is your Spouse currently employed?",
+                                                name: "spouseEmployed",
+                                                type: "radio",
+                                                options: ["Yes", "No"],
+                                            },
+                                            ...(formData.spouseEmployed === "yes"
+                                                ? [
+                                                    {
+                                                        label: "Organization",
+                                                        name: "spouseOrganization",
+                                                        type: "text",
+                                                    },
+                                                ]
+                                                : [])
+                                        ] : []
+                                    ),
+                                ].map((field) => (
+                                    <FormInput
+                                        key={field.name}
+                                        {...field}
+                                        formData={formData}
+                                        handleChange={handleChange}
+                                    />
+                                ))}
+                            </div>
+                            {/* <h2 className="text-lg font-bold mt-8">Period Served</h2>
+                            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+                                {[
+                                    { label: "From", name: "from", type: "text" },
+                                    { label: "To", name: "to", type: "text" },
                                     { label: "Last Drawn Gross Salary (Attach Pay Slip) (Rs.) Monthly", name: "salary", type: "text" },
                                     { label: "Is your father alive", name: "fatherAlive", type: "radio", options: ["Yes", "No"] },
                                     // Conditionally include father's details if father is alive
@@ -610,7 +771,7 @@ const PHDInternational = () => {
                                         handleChange={handleChange}
                                     />
                                 ))}
-                            </div>
+                            </div> */}
                             {/* total income */}
                             <h2 className='text-xl font-semibold'>Total Income</h2>
                             <h4 className='font-sm'>Please specify monthly income information for each member of your family, including yourself and your spouse
@@ -618,7 +779,7 @@ const PHDInternational = () => {
                             <div className="mt-6 overflow-x-auto">
                                 <DynamicTable
                                     tableTitle={"total_income"}
-                                    headers={["Particulars", "Monthly Salary", "From other sources if any", "Total"]}
+                                    headers={["Particulars", "Annual Salary", "From other sources if any", "Total"]}
                                     dispatch={dispatch}
                                     firstColumnTitle={["Father", "Mother", "Guardian", "Self", "Spouse", "Others"]}
                                     numRows={6}
@@ -716,7 +877,7 @@ const PHDInternational = () => {
                                     tableTitle={"individual_assets"}
                                     headers={["Particulars", "Business", "Savings and Investments", "Land and Building", "Agricultural Land", "Area/location of  Agricultural Land"]}
                                     dispatch={dispatch}
-                                    firstColumnTitle={["Plots", "Houses", "Buildings", "Land", "Others (Specify)"]}
+                                    firstColumnTitle={["Father/Guardian", "Mother/Guardian", "Self", "Spouse", "Others (Specify)"]}
                                     numRows={5}
                                 />
 

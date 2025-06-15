@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Slider from '../components/Slider';
 // import HomeImg from '../assets/cr3.jpeg'
 import { doc, getDoc } from 'firebase/firestore';
@@ -27,10 +27,10 @@ function Home() {
     }, [])
     return (
         <>
-            <Slider />
-            {/* <div>
+            {/* <Slider /> */}
+            <div>
                 <img src={HomeNew} alt="Home" className="w-full h-full object-cover" />
-            </div> */}
+            </div>
             <div>
                 <img src={Homeschlorship} alt="Home" className="w-full h-full object-cover" />
             </div>
@@ -75,9 +75,13 @@ function Home() {
                 </div>
             </div>
             {/* Alumni Section */}
-            <Alumni />
+            <Alumni showVideos={false} />
+            <div className='bg-gray-200 w-full rounded-lg  pb-12'>
+                <MediaSlider />
+
+            </div>
             {/* Vision and Mission Section */}
-            <div className="flex flex-col md:flex-row gap-6 mt-6 mb-8">
+            <div className="flex flex-col md:flex-row gap-6 mt-8 mb-8">
                 {/* Vision Card */}
                 <div className="flex-1 bg-white p-8 rounded-lg shadow-lg">
                     <h2 className="text-2xl font-bold text-gray-800 mb-4">Vision</h2>
@@ -133,3 +137,96 @@ const NewsTicker = ({ news }) => {
 };
 
 export default Home;
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Autoplay, Navigation } from "swiper/modules";
+
+// Example media data (replace with your actual images and titles)
+// import Image1 from "../assets/heef.jpg";
+// import Image2 from "../assets/cr1.jpeg";
+// import Image3 from "../assets/cr2.jpeg";
+// import Image4 from "../assets/cr3.jpeg";
+
+// // const mediaData = [
+// //     {
+// //         title: "PMU Launches New Scholarship Program",
+// //         image: Image1,
+// //     },
+// //     {
+// //         title: "Upcoming Research Symposium for Papers",
+// //         image: Image2,
+// //     },
+// //     {
+// //         title: "PMU Hosts Annual Alumni Meet",
+// //         image: Image3,
+// //     },
+// //     {
+// //         title: "PMU Hosts Annual Alumni Meet",
+// //         image: Image3,
+// //     },
+// //     {
+// //         title: "New Project Management Tools Introduced",
+// //         image: Image4,
+// //     },
+// //     {
+// //         title: "PMU Hosts Annual Alumni Meet",
+// //         image: Image3,
+// //     },
+// // ];
+
+const MediaSlider = ({ isNavigation = false, isRounded = "rounded-lg" }) => {
+    const [mediaPosts, setMediaPosts] = useState([]);
+
+    useEffect(() => {
+        async function fetchMediaPosts() {
+            try {
+                const docSnap = await getDoc(doc(db, "pm-social-media", "post"));
+                if (docSnap.exists()) {
+                    setMediaPosts(docSnap.data().posts || []);
+                } else {
+                    setMediaPosts([]);
+                }
+            } catch (error) {
+                setMediaPosts([]);
+            }
+        }
+        fetchMediaPosts();
+    }, []);
+    return (
+        <div className="w-full max-w-6xl mx-auto">
+            <h2 className='text-center text-3xl font-semibold p-6'>Media Heading</h2>
+            <Swiper
+                modules={[Autoplay, Navigation]}
+                navigation={isNavigation}
+                autoplay={{ delay: 3500 }}
+                loop
+                className="w-full"
+                breakpoints={{
+                    320: { slidesPerView: 1, spaceBetween: 16 },
+                    768: { slidesPerView: 2, spaceBetween: 24 },
+                    1024: { slidesPerView: 3, spaceBetween: 32 },
+                }}
+            >
+                {mediaPosts.map((media, idx) => (
+                    <SwiperSlide key={idx}>
+                        <div className={`bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full`}>
+                            <img
+                                src={media.img}
+                                alt={media.description}
+                                className={`w-full h-48 object-cover ${isRounded}`}
+                            />
+                            <div className="p-4 flex-1 flex items-center justify-center">
+                                <p className="text-gray-800 text-base font-semibold text-center">{media.description}</p>
+                            </div>
+                        </div>
+                    </SwiperSlide>
+                ))}
+            </Swiper>
+        </div>
+    );
+};
+
+// export default MediaSlider;

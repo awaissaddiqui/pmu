@@ -1,11 +1,11 @@
 import React from "react";
 
 const FormInput = ({ name, label, type, options, formData, handleChange }) => {
-    return (
-        <label className="block text-sm font-semibold">
-            {label}
-            {type === "radio" ? (
-                <div className="flex space-x-4 mt-1">
+    if (type === "radio") {
+        return (
+            <div className="w-full flex flex-col justify-center">
+                <span className="text-sm font-semibold mb-1">{label}</span>
+                <div className="flex space-x-4">
                     {options.map((option) => (
                         <label key={option} className="mr-4">
                             <input
@@ -20,26 +20,33 @@ const FormInput = ({ name, label, type, options, formData, handleChange }) => {
                         </label>
                     ))}
                 </div>
-            ) : type === "textarea" ? (
-                <textarea
-                    name={name}
-                    className="w-full p-2 border rounded-md"
-                    value={formData[name] || ""}
-                    onChange={handleChange}
-                    required
-                    rows={4} // Adjust rows as needed
-                />
-            ) : (
-                <input
-                    type={type}
-                    name={name}
-                    className="w-full p-2 border rounded-md"
-                    value={formData[name] || ""}
-                    onChange={handleChange}
-                    required
-                />
-            )}
-        </label>
+            </div>
+        );
+    }
+    if (type === "textarea") {
+        return (
+            <input
+                as="textarea"
+                name={name}
+                className="w-full p-2 border rounded-md"
+                value={formData[name] || ""}
+                onChange={handleChange}
+                required
+                placeholder={label}
+                rows={4}
+            />
+        );
+    }
+    return (
+        <input
+            type={type}
+            name={name}
+            className="w-full p-2 border rounded-md"
+            value={formData[name] || ""}
+            onChange={handleChange}
+            required
+            placeholder={label}
+        />
     );
 };
 

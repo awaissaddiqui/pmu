@@ -119,6 +119,33 @@ const AdminPhdInternational = () => {
                     { label: "Research Publication (Use extra sheet where required)", name: "research_publication" },
                 ]}
             />
+            {/* Research Publications */}
+            <div className="p-6 bg-white rounded-lg shadow-md">
+                <h2 className="text-xl font-semibold mb-4 text-gray-700 col-span-full">Research Publications</h2>
+                <table className="overflow-x-auto w-full border-collapse border border-gray-300 col-span-full">
+                    <thead>
+                        <tr className="bg-gray-200">
+                            <th className="border border-gray-300 p-2">Title of Research Paper</th>
+                            <th className="border border-gray-300 p-2">Area of Research</th>
+                            <th className="border border-gray-300 p-2">Published in international/Local/Journal (Full name of Journal)</th>
+                            <th className="border border-gray-300 p-2">Date of Publication</th>
+                            <th className="border border-gray-300 p-2">Impact factor of Journal in which your Paper was Published</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {formData[0]?.researchPublications?.map((research, index) => (
+                            <tr key={index} className='hover:bg-gray-100'>
+                                <td className="border border-gray-300 p-2 ">{research?.title_of_research_paper}</td>
+                                <td className="border border-gray-300 p-2">{research?.area_of_research}</td>
+                                <td className="border border-gray-300 p-2">{research?.["published_in_international/local/journal_(full_name_of_journal)"]}</td>
+                                <td className="border border-gray-300 p-2">{research?.date_of_publication}</td>
+                                <td className="border border-gray-300 p-2">{research?.impact_factor_of_journal_in_which_your_paper_was_published}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
             {/* detail_of_courses_ms_level */}
             <div className="p-6 bg-white rounded-lg shadow-md">
                 <h2 className="text-xl font-semibold mb-4 text-gray-700 col-span-full">Details of Courses at MS Level</h2>
@@ -256,7 +283,7 @@ const AdminPhdInternational = () => {
                     <thead>
                         <tr className="bg-gray-200">
                             <th className="border border-gray-300 p-2">Particulars</th>
-                            <th className="border border-gray-300 p-2">Monthly Salary</th>
+                            <th className="border border-gray-300 p-2">Annual Salary</th>
                             <th className="border border-gray-300 p-2">From other sources if any</th>
                             <th className="border border-gray-300 p-2">Total</th>
                         </tr>
@@ -266,7 +293,7 @@ const AdminPhdInternational = () => {
                             .map((title, rowIndex) => (
                                 <tr key={rowIndex} className='hover:bg-gray-100'>
                                     <td className="border border-gray-300 p-2 font-semibold">{title}</td>
-                                    <td className="border border-gray-300 p-2">{formData[0]?.total_income[rowIndex]?.monthly_salary}</td>
+                                    <td className="border border-gray-300 p-2">{formData[0]?.total_income[rowIndex]?.annual_salary}</td>
                                     <td className="border border-gray-300 p-2">{formData[0]?.total_income[rowIndex]?.from_other_sources_if_any}</td>
                                     <td className="border border-gray-300 p-2">{formData[0]?.total_income[rowIndex]?.total}</td>
                                 </tr>
@@ -361,7 +388,7 @@ const AdminPhdInternational = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {["Plots", "Houses", "Buildings", "Land", "Others (Specify)"]
+                        {["Father/Guardian", "Mother/Guardian", "Self", "Spouse", "Others (Specify)"]
                             .map((title, rowIndex) => (
                                 <tr key={rowIndex} className='hover:bg-gray-100'>
                                     <td className="border border-gray-300 p-2 font-semibold">{title}</td>

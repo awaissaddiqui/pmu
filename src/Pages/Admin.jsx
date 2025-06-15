@@ -174,7 +174,28 @@ const Admin = () => {
             {/* News Section */}
             <div className="w-full mx-auto bg-white shadow-lg rounded-lg p-6 mt-6">
                 <h2 className="text-3xl font-semibold mb-4 text-gray-900">Latest News</h2>
-                <div className="flex justify-end mb-6">
+
+                <ul className="space-y-3">
+                    {news.length > 0 ? news.map((item, index) => (
+                        <li key={index} className="bg-gray-200 p-3 rounded-lg shadow-md">
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    className="w-full p-2 rounded border border-gray-300"
+                                    value={editedNews[index]}
+                                    onChange={(e) => {
+                                        const updatedNews = [...editedNews];
+                                        updatedNews[index] = e.target.value;
+                                        setEditedNews(updatedNews);
+                                    }}
+                                />
+                            ) : (
+                                item
+                            )}
+                        </li>
+                    )) : <p className="text-gray-500">No news available.</p>}
+                </ul>
+                <div className="flex justify-end mt-6">
                     {!isEditing ? (
                         <button
                             onClick={() => setIsEditing(true)}
@@ -200,26 +221,6 @@ const Admin = () => {
                         </button>
                     )}
                 </div>
-                <ul className="space-y-3">
-                    {news.length > 0 ? news.map((item, index) => (
-                        <li key={index} className="bg-gray-200 p-3 rounded-lg shadow-md">
-                            {isEditing ? (
-                                <input
-                                    type="text"
-                                    className="w-full p-2 rounded border border-gray-300"
-                                    value={editedNews[index]}
-                                    onChange={(e) => {
-                                        const updatedNews = [...editedNews];
-                                        updatedNews[index] = e.target.value;
-                                        setEditedNews(updatedNews);
-                                    }}
-                                />
-                            ) : (
-                                item
-                            )}
-                        </li>
-                    )) : <p className="text-gray-500">No news available.</p>}
-                </ul>
 
             </div>
 
@@ -362,6 +363,8 @@ const Admin = () => {
             </div>
             <AlumniTable />
             <AdminJob />
+            <AlumniVideos />
+            <SocialMedia />
             {/* ... */}
         </div>
     );
@@ -415,15 +418,7 @@ const AlumniTable = () => {
     return (
         <div id='alumni' className="w-full mx-auto p-6 bg-white shadow-lg rounded-lg mt-6">
             <h2 className="text-3xl font-semibold mb-4 text-gray-900">Alumni List</h2>
-            {/* Add New Button */}
-            <div className="m-6  flex justify-end">
-                <button
-                    onClick={() => setModalOpen(true)} // ✅ Open modal
-                    className="bg-primary w-full md:w-36 text-white px-6 py-2 rounded-md font-semibold hover:bg-secondary transition"
-                >
-                    Add New
-                </button>
-            </div>
+
 
             {loading ? (
                 <p className="text-center text-gray-600">Loading alumni...</p>
@@ -464,6 +459,15 @@ const AlumniTable = () => {
                     </table>
                 </div>
             )}
+            {/* Add New Button */}
+            <div className="m-6  flex justify-end">
+                <button
+                    onClick={() => setModalOpen(true)} // ✅ Open modal
+                    className="bg-primary w-full md:w-36 text-white px-6 py-2 rounded-md font-semibold hover:bg-secondary transition"
+                >
+                    Add New
+                </button>
+            </div>
 
 
 
@@ -621,7 +625,7 @@ const AdminJob = () => {
             const { data: publicUrlData } = supabaseDb.storage.from("alumni").getPublicUrl(filePath);
             const downloadURL = publicUrlData.publicUrl; // Correct way to get the URL
 
-            console.log("Image URL:", downloadURL);
+            // console.log("Image URL:", downloadURL);
             setJobData((prev) => ({ ...prev, image: downloadURL }));
             alert("Image uploaded successfully!");
             setLoading(false); // Set loading to false after uploading
@@ -675,115 +679,97 @@ const AdminJob = () => {
     };
 
     return (
-        <div className="w-full mx-auto  bg-white shadow-md rounded-lg p-6 mt-12" id='job'>
-            <h2 className="text-3xl font-semibold mb-4 text-gray-900">Job Management</h2>
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+            <div className="w-full max-w-4xl bg-white shadow-xl rounded-2xl p-8 mt-12" id="job">
+                <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Job Management</h2>
 
-            {/* Add Job Form */}
-            <form className="space-y-6 mt-6" onSubmit={handleAddJob}>
-                <div className="flex justify-end">
-                    {
-                        loading ? (
-                            <button
-                                type="submit"
-                                className="bg-primary text-white px-8 w-full md:w-36 py-2 rounded-lg hover:bg-secondary transition cursor-not-allowed"
-                                disabled
-                            >
-                                Adding...
-                            </button>
-                        ) : (
-                            <button
-                                type="submit"
-                                className="bg-primary text-white px-8 w-full md:w-36 py-2 rounded-lg hover:bg-secondary transition"
-                            >
-                                Add Job
-                            </button>
-                        )
-                    }
-
-                    {/* <button
-                        type="submit"
-                        className="bg-primary text-white px-8 w-full md:w-36 py-2 rounded-lg hover:bg-secondary transition"
-                    >
-                        Add Job
-                    </button> */}
-                </div>
-                <input
-                    type="text"
-                    name="title"
-                    value={jobData.title}
-                    onChange={handleChange}
-                    placeholder="Job Title"
-                    required
-                    className="w-full p-2 border border-gray-700 rounded-lg"
-                />
-                {/* image upload */}
-                <div className="w-full">
-                    <label className="block text-gray-700 font-medium mb-2">Upload Image</label>
-
-                    {/* Hidden File Input */}
+                {/* Add Job Form */}
+                <form className="space-y-5" onSubmit={handleAddJob}>
                     <input
-                        type="file"
-                        name="image"
-                        accept="image/*"
-                        id="fileInput"
-                        onChange={handleImageUpload}
-                        className="hidden"
+                        type="text"
+                        name="title"
+                        value={jobData.title}
+                        onChange={handleChange}
+                        placeholder="Job Title"
                         required
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
 
-                    {/* Custom File Upload Button */}
-                    <label
-                        htmlFor="fileInput"
-                        className="w-full flex items-center justify-center gap-2 cursor-pointer p-3 rounded-lg border border-gray-700 bg-gray-100 text-gray-800 hover:bg-gray-200 transition"
-                    >
-                        📤 Upload Image
-                    </label>
+                    {/* Image Upload */}
+                    <div>
+                        <input
+                            type="file"
+                            name="image"
+                            accept="image/*"
+                            id="fileInput"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                            required
+                        />
+                        <label
+                            htmlFor="fileInput"
+                            className="w-full flex items-center justify-center gap-2 cursor-pointer p-3 rounded-lg border border-gray-300 bg-gray-50 hover:bg-gray-100 transition"
+                        >
+                            📤 Upload Image
+                        </label>
+                        {jobData.image && (
+                            <p className="mt-2 text-sm text-gray-600">
+                                Image uploaded for: <span className="font-medium">{jobData.title}</span>
+                            </p>
+                        )}
+                    </div>
 
-                    {/* Show selected file name */}
-                    {jobData.image && (
-                        <p className="mt-2 text-sm text-gray-600">
-                            Image uploaded for : <span className="font-medium">{jobData.title}</span>
-                        </p>
-                    )}
-                </div>
-                <textarea
-                    name="description"
-                    value={jobData.description}
-                    onChange={handleChange}
-                    placeholder="Job Description"
-                    rows="3"
-                    required
-                    className="w-full p-2 border border-gray-700 rounded-lg"
-                ></textarea>
+                    <textarea
+                        name="description"
+                        value={jobData.description}
+                        onChange={handleChange}
+                        placeholder="Job Description"
+                        rows="4"
+                        required
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    ></textarea>
 
-            </form>
+                    <div className="flex justify-end">
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className={`text-white px-6 w-full md:w-40 py-3 rounded-lg transition 
+            ${loading ? 'bg-primary/70 cursor-not-allowed' : 'bg-primary hover:bg-secondary'}`}
+                        >
+                            {loading ? "Adding..." : "Add Job"}
+                        </button>
+                    </div>
+                </form>
 
-
-            {/* Job List */}
-            <h3 className="text-2xl font-semibold mt-8 mb-6 text-gray-900">Job Listings</h3>
-            {loading ? (
-                <p className="text-center text-gray-600">Loading jobs...</p>
-            ) : jobs.length > 0 ? (
-                <ul className="space-y-4">
-                    {jobs.map((job) => (
-                        <li key={job.id} className="p-4 border border-gray-300 rounded-lg flex justify-between items-center">
-                            <div>
-                                <h4 className="text-lg font-semibold">{job.title}</h4>
-                                {/* <p className="text-sm text-gray-600">{job.Description}</p> */}
-                            </div>
-                            <button
-                                onClick={() => handleDeleteJob(job.id)}
-                                className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition"
+                {/* Job List */}
+                <h3 className="text-2xl font-semibold mt-10 mb-4 text-gray-800 border-t pt-6">Job Listings</h3>
+                {loading ? (
+                    <p className="text-center text-gray-600">Loading jobs...</p>
+                ) : jobs.length > 0 ? (
+                    <ul className="space-y-4">
+                        {jobs.map((job) => (
+                            <li
+                                key={job.id}
+                                className="p-4 border border-gray-200 rounded-lg flex justify-between items-center bg-gray-50 hover:shadow-sm transition"
                             >
-                                Delete
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p className="text-center text-gray-600">No jobs available.</p>
-            )}
+                                <div>
+                                    <h4 className="text-lg font-semibold text-gray-900">{job.title}</h4>
+                                </div>
+                                <button
+                                    onClick={() => handleDeleteJob(job.id)}
+                                    className="bg-red-500 text-white px-3 py-1.5 rounded-md hover:bg-red-600 transition"
+                                >
+                                    Delete
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="text-center text-gray-600">No jobs available.</p>
+                )}
+            </div>
         </div>
+
     );
 };
 
@@ -839,6 +825,404 @@ const DeleteForm = ({ setState, collectionName, id }) => {
         </>
     );
 };
+
+// Alumni videos
+const AlumniVideos = () => {
+    const [videosData, setVideosData] = useState([]);
+    const [videoTitle, setVideoTitle] = useState("");
+    const [videoUrl, setVideoUrl] = useState("");
+    const [loading, setLoading] = useState(false); // For add video button
+    const [deletingIdx, setDeletingIdx] = useState(null); // For delete animation
+
+    // Fetch videos on mount
+    useEffect(() => {
+        const fetchVideos = async () => {
+            const docRef = doc(db, "pm-social-media", "Alumni-videos");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                setVideosData(docSnap.data().videos || []);
+            } else {
+                setVideosData([]);
+            }
+        };
+        fetchVideos();
+    }, []);
+
+    // Add Video
+    const handleVideosUpload = async (e) => {
+        e.preventDefault();
+        if (!videoTitle || !videoUrl) return;
+        setLoading(true);
+
+        const docRef = doc(db, "pm-social-media", "Alumni-videos");
+        try {
+            const docSnap = await getDoc(docRef);
+            let newVideos = [];
+            if (docSnap.exists()) {
+                const currentVideos = docSnap.data().videos || [];
+                newVideos = [...currentVideos, { title: videoTitle, url: videoUrl }];
+                await updateDoc(docRef, { videos: newVideos });
+            } else {
+                newVideos = [{ title: videoTitle, url: videoUrl }];
+                await setDoc(docRef, { videos: newVideos });
+            }
+            setVideosData(newVideos);
+            setVideoTitle("");
+            setVideoUrl("");
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Delete Video
+    const handleDeleteVideo = async (idx) => {
+        setDeletingIdx(idx);
+        const docRef = doc(db, "pm-social-media", "Alumni-videos");
+        try {
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const currentVideos = docSnap.data().videos || [];
+                const newVideos = currentVideos.filter((_, i) => i !== idx);
+                await updateDoc(docRef, { videos: newVideos });
+                setVideosData(newVideos);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setDeletingIdx(null);
+        }
+    };
+
+    return (
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+            <div className="w-full max-w-4xl bg-white shadow-xl rounded-2xl p-8 mt-12">
+                <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+                    🎓 Add Alumni Video
+                </h2>
+
+                <form className="space-y-5" onSubmit={handleVideosUpload}>
+                    <div>
+                        <label htmlFor="videoTitle" className="block text-gray-700 font-medium mb-1">
+                            Video Title
+                        </label>
+                        <input
+                            type="text"
+                            id="videoTitle"
+                            name="videoTitle"
+                            value={videoTitle}
+                            onChange={e => setVideoTitle(e.target.value)}
+                            placeholder="Enter video title"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                            disabled={loading}
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="videoUrl" className="block text-gray-700 font-medium mb-1">
+                            Video URL
+                        </label>
+                        <input
+                            type="text"
+                            id="videoUrl"
+                            name="videoUrl"
+                            value={videoUrl}
+                            onChange={e => setVideoUrl(e.target.value)}
+                            placeholder="Enter YouTube video URL"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                            disabled={loading}
+                        />
+                    </div>
+
+                    <div className="text-center">
+                        <button
+                            type="submit"
+                            className={`w-full md:w-1/2 bg-primary text-white py-3 rounded-lg transition font-semibold flex items-center hover:cursor-pointer justify-center ${loading ? "opacity-60 cursor-not-allowed" : "hover:bg-secondary"}`}
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <>
+                                    <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                    </svg>
+                                    Adding...
+                                </>
+                            ) : "Add Video"}
+                        </button>
+                    </div>
+                </form>
+
+                {/* Video Cards Grid */}
+                <div className="mt-10">
+                    <h3 className="text-2xl font-semibold mb-4 text-gray-800">Uploaded Alumni Videos</h3>
+                    {videosData.length === 0 ? (
+                        <p className="text-gray-500 text-center">No videos uploaded yet.</p>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {videosData.map((video, idx) => (
+                                <div key={idx} className="bg-gray-50 rounded-lg shadow p-4 flex flex-col items-center relative">
+                                    <div className="w-full aspect-video mb-3">
+                                        <iframe
+                                            width="100%"
+                                            height="100%"
+                                            src={video.url}
+                                            title={video.title}
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                            className="rounded-lg w-full h-40"
+                                        ></iframe>
+                                    </div>
+                                    <p className="font-semibold text-gray-800 text-center">{video.title}</p>
+                                    <button
+                                        onClick={() => {
+                                            if (window.confirm("Are you sure to want to delete video?")) {
+                                                handleDeleteVideo(idx);
+                                            }
+                                        }}
+                                        disabled={deletingIdx === idx}
+                                        className={`absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded hover:cursor-pointer hover:bg-red-700 transition text-xs ${deletingIdx === idx ? "opacity-60 cursor-not-allowed" : ""}`}
+                                    >
+                                        {deletingIdx === idx ? (
+                                            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                            </svg>
+                                        ) : "Delete"}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const SocialMedia = () => {
+    const [postImgUrl, setPostImgUrl] = useState("");
+    const [postDescription, setPostDescription] = useState("");
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [deletingIdx, setDeletingIdx] = useState(null);
+
+    // Fetch posts on mount
+    useEffect(() => {
+        const fetchPosts = async () => {
+            const docRef = doc(db, "pm-social-media", "post");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                setPosts(docSnap.data().posts || []);
+            } else {
+                setPosts([]);
+            }
+        };
+        fetchPosts();
+    }, []);
+
+    // Handle image upload
+    const onFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const fileName = `${Date.now()}_${file.name}`;
+        const filePath = `social-media/${fileName}`;
+
+        try {
+            setLoading(true);
+            const { data, error } = await supabaseDb.storage.from("alumni").upload(filePath, file);
+            if (error) throw error;
+
+            const { data: publicUrlData } = supabaseDb.storage.from("alumni").getPublicUrl(filePath);
+            const downloadURL = publicUrlData.publicUrl;
+            setPostImgUrl(downloadURL);
+            setLoading(false);
+        } catch (error) {
+            alert("Error uploading image. Please try again.");
+            setLoading(false);
+        }
+    };
+
+    // Handle form submit
+    const handleSocialMediaForm = async (e) => {
+        e.preventDefault();
+        if (!postImgUrl || !postDescription) {
+            alert("Please add image and description!");
+            return;
+        }
+        setLoading(true);
+        const docRef = doc(db, "pm-social-media", "post");
+        try {
+            const docSnap = await getDoc(docRef);
+            let newPosts = [];
+            if (docSnap.exists()) {
+                const currentPosts = docSnap.data().posts || [];
+                newPosts = [...currentPosts, { img: postImgUrl, description: postDescription }];
+                await updateDoc(docRef, { posts: newPosts });
+            } else {
+                newPosts = [{ img: postImgUrl, description: postDescription }];
+                await setDoc(docRef, { posts: newPosts });
+            }
+            setPosts(newPosts);
+            setPostImgUrl("");
+            setPostDescription("");
+        } catch (error) {
+            alert("Error adding post.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getSupabasePathFromUrl = (url) => {
+        // Example: https://xyz.supabase.co/storage/v1/object/public/alumni/social-media/1718282828_filename.jpg
+        // Returns: social-media/1718282828_filename.jpg
+        const match = url.match(/alumni\/(.+)$/);
+        return match ? match[1] : null;
+    };
+
+
+    // Handle delete post
+    const handleDeletePost = async (idx) => {
+        if (!window.confirm("Are you sure you want to delete this post?")) return;
+        setDeletingIdx(idx);
+        const docRef = doc(db, "pm-social-media", "post");
+        try {
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const currentPosts = docSnap.data().posts || [];
+                const postToDelete = currentPosts[idx];
+                const newPosts = currentPosts.filter((_, i) => i !== idx);
+                await updateDoc(docRef, { posts: newPosts });
+                setPosts(newPosts);
+
+                // Delete image from Supabase storage
+                if (postToDelete && postToDelete.img) {
+                    const filePath = getSupabasePathFromUrl(postToDelete.img);
+                    if (filePath) {
+                        const { error } = await supabaseDb.storage.from("alumni").remove([filePath]);
+                        if (error) {
+                            // Optional: show error to user
+                            console.error("Error deleting image from Supabase:", error.message);
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            alert("Error deleting post.");
+        } finally {
+            setDeletingIdx(null);
+        }
+    };
+
+    return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4 py-12">
+            <div className="w-full max-w-4xl bg-white shadow-xl rounded-2xl p-8 mt-12">
+                <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+                    📱 Add Social Media Event
+                </h2>
+
+                <form className="space-y-5" onSubmit={handleSocialMediaForm}>
+                    <div className="flex flex-col items-center justify-center">
+                        <label htmlFor="postImg" className="block text-gray-700 font-medium mb-2">
+                            Upload Image
+                        </label>
+                        <div className="w-40 h-40 flex items-center justify-center border-2 border-dashed border-primary rounded-lg bg-gray-50 hover:bg-gray-100 transition cursor-pointer mb-3">
+                            <input
+                                type="file"
+                                id="postImg"
+                                name="postImg"
+                                className="hidden"
+                                onChange={onFileChange}
+                                disabled={loading}
+                            />
+                            <label
+                                htmlFor="postImg"
+                                className="flex flex-col items-center justify-center cursor-pointer w-full h-full"
+                            >
+                                <span className="text-4xl mb-2">📷</span>
+                                <span className="text-primary font-semibold">Choose Image</span>
+                            </label>
+                        </div>
+                        {postImgUrl && (
+                            <img src={postImgUrl} alt="Preview" className="w-32 h-32 object-cover rounded-lg mb-2" />
+                        )}
+                    </div>
+
+                    <div>
+                        <label htmlFor="postDescription" className="block text-gray-700 font-medium mb-1">
+                            Description
+                        </label>
+                        <input
+                            type="text"
+                            id="postDescription"
+                            name="postDescription"
+                            value={postDescription}
+                            onChange={e => setPostDescription(e.target.value)}
+                            placeholder="Description of the image..."
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                            disabled={loading}
+                        />
+                    </div>
+
+                    <div className="text-center">
+                        <button
+                            type="submit"
+                            className={`w-full md:w-1/2 bg-primary hover:cursor-pointer text-white py-3 rounded-lg hover:bg-secondary transition font-semibold flex items-center justify-center ${loading ? "opacity-60 cursor-not-allowed" : ""}`}
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <>
+                                    <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                    </svg>
+                                    Processing...
+                                </>
+                            ) : "Add Event"}
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            {/* Posts Grid */}
+            <div className="w-full max-w-6xl mx-auto mt-12">
+                <h2 className="text-2xl font-bold mb-6 text-gray-900 text-center">Social Media Posts</h2>
+                {posts.length === 0 ? (
+                    <p className="text-gray-500 text-center">No posts yet.</p>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {posts.map((post, idx) => (
+                            <div key={idx} className="bg-white rounded-lg shadow p-4 flex flex-col items-center relative">
+                                <img src={post.img} alt="Post" className="w-full h-40 object-cover rounded-lg mb-3" />
+                                <p className="font-semibold text-gray-800 text-center mb-2">{post.description}</p>
+                                <button
+                                    onClick={() => {
+                                        if (window.confirm("Are you sure you want to delete this post?")) {
+                                            handleDeletePost(idx);
+                                        }
+                                    }}
+                                    disabled={deletingIdx === idx}
+                                    className={`absolute top-2 right-2 bg-red-500 hover:cursor-pointer text-white px-2 py-1 rounded hover:bg-red-700 transition text-xs ${deletingIdx === idx ? "opacity-60 cursor-not-allowed" : ""}`}
+                                >
+                                    {deletingIdx === idx ? (
+                                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                        </svg>
+                                    ) : "Delete"}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
 
 
 

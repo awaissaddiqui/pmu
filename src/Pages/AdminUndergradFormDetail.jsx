@@ -98,11 +98,11 @@ const AdminUndergradFormDetail = () => {
             {/* Details of Family members Earning */}
             <div className="flex flex-col bg-white p-6 shadow-md rounded-lg mt-6">
                 <h2 className="text-xl font-semibold mb-4 text-gray-700 col-span-full">
-                    Details of Family Member Earning
+                    Family Member Living with You
                 </h2>
                 <input type="text"
                     className="w-full border border-gray-300 p-2 rounded-lg"
-                    readOnly value={formData[0].familyMemberEarningDetails} />
+                    readOnly value={formData[0].familyMemberLivingWithYou} />
 
             </div>
 
@@ -288,7 +288,7 @@ const AdminUndergradFormDetail = () => {
                         options: ["Rented", "Self or Family Owned", "Employer/Govt Owned"],
                     },
                     {
-                        name: "rentPayment",
+                        name: "rentAmount",
                         label: "Rent Payment",
                         type: "radio",
                         options: ["Self", "Employer/Govt", "Others"],
@@ -356,6 +356,34 @@ const AdminUndergradFormDetail = () => {
                 </table>
             </div>
             {/* Page 2 details */}
+
+            {/* Utilities Expenditures */}
+            <h2 className="mt-8 text-xl font-bold mb-4">Utilities Expenditure</h2>
+            <div className="mb-6 overflow-x-auto">
+                <table className="w-full border border-gray-300 mb-6">
+                    <thead>
+                        <tr className="bg-secondary text-white ">
+                            <th className="p-2 border">Utility Type</th>
+                            <th className="p-2 border">Last Month Utilities Paid (PKR)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {[
+                            { id: "Electricity Bill" },
+                            { id: "Internet Bill" },
+                            { id: "Gas Bill" },
+                            { id: "Water Bill" },
+                            { id: "Telephone Bill" },
+                        ].map((item, index) => (
+                            <tr key={index} className="text-center border">
+                                <td className="p-2 border">{item.id}</td>
+                                <td className="p-2 border">{formData[0]?.utilityExpenditure?.[item.id] || "N/A"}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
 
             {/* Income and Expenditure Table */}
             <h2 className="mt-8 text-xl font-bold mb-4">Income & Expenditure</h2>
@@ -616,6 +644,7 @@ const AdminUndergradFormDetail = () => {
                         <table className="w-full border-collapse border border-gray-300 mt-2">
                             <thead>
                                 <tr className="bg-gray-200">
+                                    <th className="border border-gray-300 p-2">Name of institute</th>
                                     <th className="border border-gray-300 p-2">Scholarship Name</th>
                                     <th className="border border-gray-300 p-2">Total Scholarship Amount</th>
                                     <th className="border border-gray-300 p-2">Scholarship Period</th>
@@ -625,6 +654,7 @@ const AdminUndergradFormDetail = () => {
                             <tbody>
                                 {formData[0].scholarshipsDetails.map((scholarship, index) => (
                                     <tr key={index} className="hover:bg-gray-100">
+                                        <td className="border border-gray-300 p-2">{scholarship.name_of_institute || "N/A"}</td>
                                         <td className="border border-gray-300 p-2">{scholarship.scholarship_name || "N/A"}</td>
                                         <td className="border border-gray-300 p-2">{scholarship.total_scholarship_amount || "N/A"}</td>
                                         <td className="border border-gray-300 p-2">{scholarship.total_scholarship_period || "N/A"}</td>

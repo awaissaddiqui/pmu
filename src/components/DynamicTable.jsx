@@ -1,12 +1,32 @@
 import { useEffect, useState } from "react";
 
 const DynamicTable = ({ firstColumnTitle, headers, numRows, tableTitle, dispatch }) => {
+    // Helper to create an empty row object
+    const createEmptyRow = () =>
+        Object.fromEntries(headers.slice(1).map(header => [header.toLowerCase().replace(/\s+/g, '_'), ""]));
+
     // Initialize table data
     const [tableData, setTableData] = useState(
-        Array(numRows).fill().map(() =>
-            Object.fromEntries(headers.slice(1).map(header => [header.toLowerCase().replace(/\s+/g, '_'), ""]))
-        )
+        Array(numRows).fill().map(() => createEmptyRow())
     );
+
+    // Sync tableData length with numRows
+    useEffect(() => {
+        setTableData(prev => {
+            if (numRows > prev.length) {
+                // Add new empty rows
+                return [
+                    ...prev,
+                    ...Array(numRows - prev.length).fill().map(() => createEmptyRow())
+                ];
+            } else if (numRows < prev.length) {
+                // Remove extra rows
+                return prev.slice(0, numRows);
+            }
+            return prev;
+        });
+        // eslint-disable-next-line
+    }, [numRows, headers]);
 
     // Handle input changes
     const handleInputChange = (rowIndex, field, value) => {
@@ -26,7 +46,7 @@ const DynamicTable = ({ firstColumnTitle, headers, numRows, tableTitle, dispatch
             field: tableTitle,
             value: filteredData,
         });
-    }, [tableData, dispatch]);
+    }, [tableData, dispatch, tableTitle]);
 
     return (
         <div className="overflow-x-auto">
@@ -61,7 +81,7 @@ const DynamicTable = ({ firstColumnTitle, headers, numRows, tableTitle, dispatch
                                             type="text"
                                             name={fieldName}
                                             className="w-full p-2 border rounded-md"
-                                            value={tableData[rowIndex][fieldName] || ""}
+                                            value={tableData[rowIndex]?.[fieldName] || ""}
                                             onChange={(e) => handleInputChange(rowIndex, fieldName, e.target.value)}
                                         />
                                     </td>

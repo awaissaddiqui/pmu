@@ -7,6 +7,7 @@ import DownloadFormData from "../../DownloadFormData";
 import { downloadPdfData } from "../../../hook/pdfGenerator";
 import Alert from "../../Alert";
 import { useNavigate } from "react-router";
+import { domiciles } from "../../../utils/data";
 
 const GraduateNationalProgram = () => {
     const { formData, dispatch, submitForm } = useGraduateNationalForm();
@@ -442,7 +443,7 @@ const GraduateNationalProgram = () => {
                                     type: "date",
                                 },
                                 { label: "Date of Birth", name: "dob", type: "date" },
-                                { label: "Domicile", name: "domicile", type: "text" },
+                                // { label: "Domicile", name: "domicile", type: "text" },
                                 {
                                     name: "gender",
                                     label: "Gender",
@@ -514,6 +515,22 @@ const GraduateNationalProgram = () => {
                                     handleChange={handleChange}
                                 />
                             ))}
+                            {/* Domicile Dropdown */}
+                            <label className="w-full">
+                                <select
+                                    name="domicile"
+                                    value={formData.domicile || ""}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded-md"
+                                >
+                                    <option value="" disabled>Select Domicile</option>
+                                    {domiciles.map((dom, idx) => (
+                                        <option key={idx} value={dom}>
+                                            {dom}
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
                         </div>
                         <div className="mt-6 max-w-sm">
                             <label className="block font-semibold mb-2 text-gray-800">
@@ -756,6 +773,26 @@ const GraduateNationalProgram = () => {
                                     name: "salary",
                                     type: "text",
                                 },
+
+                            ].map((field) => (
+                                <FormInput
+                                    key={field.name}
+                                    {...field}
+                                    formData={formData}
+                                    handleChange={handleChange}
+                                />
+                            ))}
+                        </div>
+                        {/* Family Information */}
+                        <h2 className="text-xl font-bold mb-4">Family Information</h2>
+                        <h5 className="text-lg font-bold mb-4">Father Information</h5>
+                        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+                            {[
+                                {
+                                    label: "Full Name of Father",
+                                    label: "fatherName",
+                                    type: "text"
+                                },
                                 {
                                     label: "Is your father alive",
                                     name: "fatherAlive",
@@ -766,23 +803,22 @@ const GraduateNationalProgram = () => {
                                 ...(formData.fatherAlive === "yes"
                                     ? [
                                         {
-                                            label: "If yes, Full Name",
-                                            name: "fatherName",
-                                            type: "text",
-                                        },
-                                        {
                                             label: "Telephone No",
                                             name: "fatherPhone",
                                             type: "tel",
                                         },
                                         { label: "Mobile No", name: "fatherMobile", type: "tel" },
                                         { label: "Email", name: "fatherEmail", type: "email" },
-                                        {
-                                            label: "Is your Father currently employed?",
-                                            name: "fatherEmployed",
-                                            type: "radio",
-                                            options: ["Yes", "No"],
-                                        },
+                                    ]
+                                    : []),
+                                {
+                                    label: "Is your Father currently employed?",
+                                    name: "fatherEmployed",
+                                    type: "radio",
+                                    options: ["Yes", "No"],
+                                },
+                                ...(formData.fatherEmployed === "yes"
+                                    ? [
                                         {
                                             label: "Designation",
                                             name: "fatherDesignation",
@@ -792,30 +828,47 @@ const GraduateNationalProgram = () => {
                                             label: "Date of Joining (dd/mm/yy)",
                                             name: "fatherJoiningDate",
                                             type: "date",
-                                        },
-                                    ]
-                                    : []),
-                                // Spouse details (always shown)
-                                { label: "Spouse Full Name", name: "spouseName", type: "text" },
-                                { label: "Age", name: "spouseAge", type: "text" },
-                                { label: "Telephone No", name: "spousePhone", type: "tel" },
-                                { label: "Mobile No", name: "spouseMobile", type: "tel" },
-                                { label: "Email", name: "spouseEmail", type: "email" },
-                                {
-                                    label: "Is your Spouse currently employed?",
-                                    name: "spouseEmployed",
-                                    type: "radio",
-                                    options: ["Yes", "No"],
-                                },
-                                ...(formData.spouseEmployed === "yes"
-                                    ? [
+                                        }] : []
+                                ),
+                            ].map((field) => (
+                                <FormInput
+                                    key={field.name}
+                                    {...field}
+                                    formData={formData}
+                                    handleChange={handleChange}
+                                />
+                            ))
+                            }
+                        </div>
+                        <h5 className="text-lg font-bold mb-4">Spouse Information</h5>
+                        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+                            {/* spouse information */}
+                            {[ // Spouse details (always shown)
+                                { label: "Are you Married", name: "spouseMarried", type: "radio", options: ["Yes", "No"] },
+                                ...(formData.spouseMarried === "yes" ?
+                                    [
+                                        { label: "Spouse Full Name", name: "spouseName", type: "text" },
+                                        { label: "Age", name: "spouseAge", type: "text" },
+                                        { label: "Telephone No", name: "spousePhone", type: "tel" },
+                                        { label: "Mobile No", name: "spouseMobile", type: "tel" },
+                                        { label: "Email", name: "spouseEmail", type: "email" },
                                         {
-                                            label: "Organization",
-                                            name: "spouseOrganization",
-                                            type: "text",
+                                            label: "Is your Spouse currently employed?",
+                                            name: "spouseEmployed",
+                                            type: "radio",
+                                            options: ["Yes", "No"],
                                         },
-                                    ]
-                                    : []),
+                                        ...(formData.spouseEmployed === "yes"
+                                            ? [
+                                                {
+                                                    label: "Organization",
+                                                    name: "spouseOrganization",
+                                                    type: "text",
+                                                },
+                                            ]
+                                            : [])
+                                    ] : []
+                                ),
                             ].map((field) => (
                                 <FormInput
                                     key={field.name}
@@ -825,6 +878,7 @@ const GraduateNationalProgram = () => {
                                 />
                             ))}
                         </div>
+
                         {/* total income */}
                         <h2 className="text-xl font-semibold">Total Income</h2>
                         <h4 className="font-sm">

@@ -58,7 +58,7 @@ function App() {
                   <Route path="/scholarships/CMEEF/details/PHDInternational" element={<PHDInternational />} />
                   <Route path="/scholarships/HEEF/details" element={<HEEF />} />
                   <Route path="/projects" element={<Projects />} />
-                  <Route path="/jobs" element={<Jobs />} />
+                  <Route path="/advertisement" element={<Jobs />} />
                   <Route path="/alumni" element={<Alumni />} />
                   <Route path="/research" element={<Research />} />
                   <Route path="/research/registration" element={<ResearchForm />} />

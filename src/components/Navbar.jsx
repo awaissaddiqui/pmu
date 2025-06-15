@@ -17,7 +17,7 @@ const Navbar = () => {
         { name: "Research", path: "/research" },
         { name: "Alumni", path: "/alumni" },
         { name: "Login", path: "/login" },
-        { name: "Jobs", path: "/jobs" }
+        { name: "Advertisement", path: "/advertisement" }
     ];
 
     useEffect(() => {
