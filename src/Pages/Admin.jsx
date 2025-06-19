@@ -894,6 +894,14 @@ const AlumniVideos = () => {
             setDeletingIdx(null);
         }
     };
+    function getYouTubeEmbedUrl(url) {
+        // Handles both youtu.be and youtube.com URLs
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        const match = url.match(regExp);
+        return match && match[2].length === 11
+            ? `https://www.youtube.com/embed/${match[2]}`
+            : url;
+    }
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
@@ -967,7 +975,7 @@ const AlumniVideos = () => {
                                         <iframe
                                             width="100%"
                                             height="100%"
-                                            src={video.url}
+                                            src={getYouTubeEmbedUrl(video.url)}
                                             title={video.title}
                                             frameBorder="0"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

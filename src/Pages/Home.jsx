@@ -144,39 +144,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Autoplay, Navigation } from "swiper/modules";
 
-// Example media data (replace with your actual images and titles)
-// import Image1 from "../assets/heef.jpg";
-// import Image2 from "../assets/cr1.jpeg";
-// import Image3 from "../assets/cr2.jpeg";
-// import Image4 from "../assets/cr3.jpeg";
-
-// // const mediaData = [
-// //     {
-// //         title: "PMU Launches New Scholarship Program",
-// //         image: Image1,
-// //     },
-// //     {
-// //         title: "Upcoming Research Symposium for Papers",
-// //         image: Image2,
-// //     },
-// //     {
-// //         title: "PMU Hosts Annual Alumni Meet",
-// //         image: Image3,
-// //     },
-// //     {
-// //         title: "PMU Hosts Annual Alumni Meet",
-// //         image: Image3,
-// //     },
-// //     {
-// //         title: "New Project Management Tools Introduced",
-// //         image: Image4,
-// //     },
-// //     {
-// //         title: "PMU Hosts Annual Alumni Meet",
-// //         image: Image3,
-// //     },
-// // ];
-
 const MediaSlider = ({ isNavigation = false, isRounded = "rounded-lg" }) => {
     const [mediaPosts, setMediaPosts] = useState([]);
 
@@ -196,8 +163,7 @@ const MediaSlider = ({ isNavigation = false, isRounded = "rounded-lg" }) => {
         fetchMediaPosts();
     }, []);
     return (
-        <div className="w-full max-w-6xl mx-auto">
-            <h2 className='text-center text-3xl font-semibold p-6'>Media Heading</h2>
+        <div className="w-full max-w-6xl mx-auto pt-8">
             <Swiper
                 modules={[Autoplay, Navigation]}
                 navigation={isNavigation}
@@ -212,14 +178,14 @@ const MediaSlider = ({ isNavigation = false, isRounded = "rounded-lg" }) => {
             >
                 {mediaPosts.map((media, idx) => (
                     <SwiperSlide key={idx}>
-                        <div className={`bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full`}>
+                        <div className={`bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[380px]`}>
                             <img
                                 src={media.img}
                                 alt={media.description}
-                                className={`w-full h-48 object-cover ${isRounded}`}
+                                className={`w-full h-60 object-cover ${isRounded}`}
                             />
-                            <div className="p-4 flex-1 flex items-center justify-center">
-                                <p className="text-gray-800 text-base font-semibold text-center">{media.description}</p>
+                            <div className="p-2 flex-1 flex items-center justify-center">
+                                <p className="text-gray-800 text-base text-center">{media.description}</p>
                             </div>
                         </div>
                     </SwiperSlide>
