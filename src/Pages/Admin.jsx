@@ -144,6 +144,8 @@ const Admin = () => {
         localStorage.removeItem("formData");
         localStorage.removeItem("formDataUndergrad");
         localStorage.removeItem("formDataGraduate");
+        localStorage.removeItem("formDataPhdInternational");
+        navigate("/login");
     };
 
     return (

@@ -60,14 +60,35 @@ const GraduateNationalProgram = () => {
     };
 
     const handleChange = (event) => {
-        // event.preventDefault();
         const { name, value, type } = event.target;
 
-        dispatch({
-            type: "UPDATE_FIELD",
-            field: name,
-            value: type === "file" ? event.target.files[0] : value,
-        });
+        // For textareas with maxWords, check if it's one of the statement of purpose fields
+        if (type === "textarea" && [
+            "benefit_to_pakistan",
+            "skills_and_knowledge",
+            "supporting_statement",
+            "proposed_studies",
+            "join_after_completion"
+        ].includes(name)) {
+            // Count words in the text
+            const words = value.trim().split(/\s+/).filter(Boolean);
+
+            // If within limit, update normally
+            // NOTE: We're still allowing typing over the limit, but showing a warning
+            // This provides better UX than hard truncating
+            dispatch({
+                type: "UPDATE_FIELD",
+                field: name,
+                value: value
+            });
+        } else {
+            // For other fields, update normally
+            dispatch({
+                type: "UPDATE_FIELD",
+                field: name,
+                value: type === "file" ? event.target.files[0] : value,
+            });
+        }
     };
     // handle download form data
 
@@ -81,26 +102,22 @@ const GraduateNationalProgram = () => {
                     "cnic_no",
                     "father_name",
                     "father_cnic_no",
-                    "passport_no",
-                    "passport_expiry_date",
                     "dob",
                     "domicile",
                     "gender",
-                    "age",
                     "mailing_address",
                     "permanent_address",
                     "email",
                     "mobile_1",
                     "mobile_2",
                     "home",
-                    "fax",
+                    "whatsapp",
                     "office",
-                    "references",
                     "marital_status",
                     "scholarships_list",
                     "academic_honors",
                     "offer_detail",
-                    "university_name",
+                    "university_degree_name",
                     "commencement_date",
                     "completion_date",
                     "university_code",
@@ -183,16 +200,16 @@ const GraduateNationalProgram = () => {
                     "CGPA",
                     "Institution",
                     "Board/University",
+                    "Medals",
                 ],
                 firstColumn: [
                     "SSC/Matric",
                     "HSSC/Intermediate",
-                    "Bachelors (B.A, BSc, Hons. etc.)",
-                    "Masters or Equivalent",
+                    "Bachelors (B.A, BSc) 14 Years",
+                    "BS Hons(16 Years)",
                     "M. Phil",
                     "GRE/GAT (Subject/General)",
-                    "Medals (Gold/Silver/Bronze)",
-                    "Other (please specify)",
+                    "MA/MSc",
                 ],
             },
             {
@@ -436,24 +453,18 @@ const GraduateNationalProgram = () => {
                                     name: "father_cnic_no",
                                     type: "text",
                                 },
-                                { label: "Passport No", name: "passport_no", type: "text" },
-                                {
-                                    label: "Passport Expiry Date",
-                                    name: "passport_expiry_date",
-                                    type: "date",
-                                },
                                 { label: "Date of Birth", name: "dob", type: "date" },
-                                // { label: "Domicile", name: "domicile", type: "text" },
+                                {
+                                    label: "Domicile",
+                                    name: "domicile",
+                                    type: "select",
+                                    options: domiciles,
+                                },
                                 {
                                     name: "gender",
                                     label: "Gender",
-                                    type: "radio",
+                                    type: "select",
                                     options: ["Male", "Female"],
-                                },
-                                {
-                                    label: "Age on closing date for admission",
-                                    name: "age",
-                                    type: "number",
                                 },
                                 {
                                     label: "Mailing Address",
@@ -469,20 +480,15 @@ const GraduateNationalProgram = () => {
                                 { label: "Mobile 1", name: "mobile_1", type: "tel" },
                                 { label: "Mobile 2", name: "mobile_2", type: "tel" },
                                 { label: "Home", name: "home", type: "tel" },
-                                { label: "Fax", name: "fax", type: "tel" },
+                                { label: "WhatsApp", name: "whatsapp", type: "tel" },
                                 { label: "Office", name: "office", type: "tel" },
-                                {
-                                    label: "References in Pakistan",
-                                    name: "references",
-                                    type: "text",
-                                },
                                 {
                                     name: "marital_status",
                                     label: "Marital Status",
-                                    type: "radio",
+                                    type: "select",
                                     options: ["Married", "Single"],
                                 },
-                                ...(formData.marital_status === "married"
+                                ...(formData.marital_status === "Married"
                                     ? [
                                         {
                                             label:
@@ -495,10 +501,10 @@ const GraduateNationalProgram = () => {
                                 {
                                     name: "other_nationality",
                                     label: "Do you have any other nationality?",
-                                    type: "radio",
+                                    type: "select",
                                     options: ["Yes", "No"],
                                 },
-                                ...(formData.other_nationality === "yes"
+                                ...(formData.other_nationality === "Yes"
                                     ? [
                                         {
                                             label: "If Yes, provide details",
@@ -515,26 +521,11 @@ const GraduateNationalProgram = () => {
                                     handleChange={handleChange}
                                 />
                             ))}
-                            {/* Domicile Dropdown */}
-                            <label className="w-full">
-                                <select
-                                    name="domicile"
-                                    value={formData.domicile || ""}
-                                    onChange={handleChange}
-                                    className="w-full p-2 border rounded-md"
-                                >
-                                    <option value="" disabled>Select Domicile</option>
-                                    {domiciles.map((dom, idx) => (
-                                        <option key={idx} value={dom}>
-                                            {dom}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
                         </div>
+
                         <div className="mt-6 max-w-sm">
                             <label className="block font-semibold mb-2 text-gray-800">
-                                Upload Attested Photo
+                                Upload Attested Photo <span className="text-red-500">*</span>
                             </label>
                             <div className="relative w-full">
                                 <input
@@ -552,6 +543,7 @@ const GraduateNationalProgram = () => {
                                     className={`flex items-center justify-center w-full bg-gray-400 p-4 border-2 border-dashed rounded-lg cursor-pointer
                                     transition hover:bg-secondary
                                     ${isUploading ? "opacity-50 cursor-wait" : ""}
+                                    ${!formData.attested_photo ? "border-red-400" : "border-gray-400"}
                                     `}
                                 >
                                     📎 Click to Upload Photo
@@ -560,6 +552,9 @@ const GraduateNationalProgram = () => {
                                     <p className="text-green-600 mt-2 font-medium">
                                         ✅ File Uploaded Successfully
                                     </p>
+                                )}
+                                {!formData.attested_photo && (
+                                    <p className="text-red-500 text-sm mt-1">Required field</p>
                                 )}
                             </div>
                         </div>
@@ -574,28 +569,40 @@ const GraduateNationalProgram = () => {
                                     "Result Declaration Date",
                                     "Marks Obtained",
                                     "Total Marks",
-                                    "CGPA",
+                                    "CGPA (%)",
                                     "Institution",
                                     "Board/University",
+                                    "Medals"
                                 ]}
                                 dispatch={dispatch}
                                 firstColumnTitle={[
                                     "SSC/Matric",
                                     "HSSC/Intermediate",
-                                    "Bachelors (B.A, BSc, Hons. etc.)",
-                                    "Masters or Equivalent",
+                                    "Bachelors (B.A, BSc) 14 Years",
+                                    "BS Hons(16 Years)",
                                     "M. Phil",
                                     "GRE/GAT (Subject/General)",
-                                    "Medals (Gold/Silver/Bronze)",
-                                    "Other (please specify)",
+                                    "MA/MSc",
                                 ]}
-                                numRows={8}
+                                numRows={7}
                             />
                         </div>
+
+
 
                         {/* Additional Input Fields */}
                         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-6">
                             {[
+                                {
+                                    label: "GRE/GAT (Subject/General) Score",
+                                    name: "gre_gat_score",
+                                    type: "text",
+                                },
+                                {
+                                    label: "Result Date of GRE/GAT",
+                                    name: "gre_gat_date",
+                                    type: "date",
+                                },
                                 {
                                     label:
                                         "List of scholarships or fellowships held at present or in past",
@@ -609,14 +616,15 @@ const GraduateNationalProgram = () => {
                                     type: "text",
                                 },
                                 {
-                                    label: "Offer detail for MS/PhD/DPhil Program",
+                                    label: "Current Degree Enrollment for MS/PhD/DPhil Program",
                                     name: "offer_detail",
                                     type: "text",
                                 },
                                 {
-                                    label: "Name of University",
-                                    name: "university_name",
-                                    type: "text",
+                                    label: "Name of University Degree",
+                                    name: "university_degree_name",
+                                    type: "select",
+                                    options: ["MS (Master of Science)", "MPhil", "PhD"],
                                 },
                                 {
                                     label: "Date of Commencement of classes",
@@ -629,7 +637,7 @@ const GraduateNationalProgram = () => {
                                     type: "date",
                                 },
                                 {
-                                    label: "University Ref/ID Code",
+                                    label: "University Ref/ID/Registration Code",
                                     name: "university_code",
                                     type: "text",
                                 },
@@ -641,17 +649,17 @@ const GraduateNationalProgram = () => {
                                 },
                                 { label: "Title of MS/PhD/DPhil", name: "title", type: "text" },
                                 {
-                                    label: "Supervisor Name",
+                                    label: "Supervisor/HOD Name",
                                     name: "supervisor_name",
                                     type: "text",
                                 },
                                 {
-                                    label: "Supervisor Email",
+                                    label: "Supervisor/HOD Email",
                                     name: "supervisor_email",
                                     type: "email",
                                 },
                                 {
-                                    label: "Supervisor Contact",
+                                    label: "Supervisor/HOD Contact",
                                     name: "supervisor_contact",
                                     type: "tel",
                                 },
@@ -743,23 +751,44 @@ const GraduateNationalProgram = () => {
                             />
                         </div>
                         {/* Employment details */}
-                        <div className="mt-6 overflow-x-auto">
-                            <strong>Employment details </strong>
-                            <DynamicTable
-                                tableTitle={"employment_details"}
-                                headers={[
-                                    "",
-                                    "Name of Employer with Address ",
-                                    "Category of Employer(Federal/Prov Govt, SemiGovt, Autonomous,Corporation, Private)",
-                                    "Designation with Grade BPS, Group etc. if applicab",
-                                    "Nature of Job(Regular/Contractetc.)",
-                                    "Job details(Teaching, R&D, Service, Technical, other etc)",
-                                ]}
-                                dispatch={dispatch}
-                                firstColumnTitle={"#"}
-                                numRows={7}
-                            />
-                        </div>
+
+                        <label className="block font-medium">
+                            Are you currently employed?{" "}
+                            <span className="text-red-500">*</span>
+                            <select
+                                name="currently_employed"
+                                required
+                                className="w-full p-2 border rounded-md"
+                                value={formData.currently_employed} // ✅ Bind value correctly
+                                onChange={handleChange} // ✅ Update state
+                            >
+                                <option disabled selected>
+                                    Select
+                                </option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </label>
+
+                        {formData.currently_employed === "yes" && (
+                            <div className="mt-6 overflow-x-auto">
+                                <strong>Employment details </strong>
+                                <DynamicTable
+                                    tableTitle={"employment_details"}
+                                    headers={[
+                                        "",
+                                        "Name of Employer with Address ",
+                                        "Category of Employer(Federal/Prov Govt, SemiGovt, Autonomous,Corporation, Private)",
+                                        "Designation with Grade BPS, Group etc. if applicab",
+                                        "Nature of Job(Regular/Contractetc.)",
+                                        "Job details(Teaching, R&D, Service, Technical, other etc)",
+                                    ]}
+                                    dispatch={dispatch}
+                                    firstColumnTitle={"#"}
+                                    numRows={7}
+                                />
+                            </div>
+                        )}
 
                         {/* Period Served */}
                         <h2 className="text-lg font-bold mt-8">Period Served</h2>
@@ -1251,33 +1280,38 @@ const GraduateNationalProgram = () => {
                         {[
                             {
                                 label:
-                                    "How will the proposed degree be of benefit to Pakistan/Khyber Pakhtunkhwa?",
+                                    "How will the proposed degree be of benefit to Pakistan/Khyber Pakhtunkhwa? (300 words max)",
                                 name: "benefit_to_pakistan",
                                 type: "textarea",
+                                maxWords: 300
                             },
                             {
                                 label:
-                                    "What skills and knowledge do you hope to gain from your studies? How do you propose to use them (if possible, list specific actions) in Pakistan/Khyber Pakhtunkhwa?",
+                                    "What skills and knowledge do you hope to gain from your studies? How do you propose to use them (if possible, list specific actions) in Pakistan/Khyber Pakhtunkhwa? (300 words max)",
                                 name: "skills_and_knowledge",
                                 type: "textarea",
+                                maxWords: 300
                             },
                             {
                                 label:
-                                    "Is there anything else you would like to add in support of your application for this scholarship?",
+                                    "Is there anything else you would like to add in support of your application for this scholarship? (300 words max)",
                                 name: "supporting_statement",
                                 type: "textarea",
+                                maxWords: 300
                             },
                             {
                                 label:
-                                    "How do you relate the proposed studies to your previous study/achievements and your present job/occupation?",
+                                    "How do you relate the proposed studies to your previous study/achievements and your present job/occupation? (300 words max)",
                                 name: "proposed_studies",
                                 type: "textarea",
+                                maxWords: 300
                             },
                             {
                                 label:
-                                    "Where would you like to join in Pakistan after completion of your MS/MPhil/PhD studies? [only for those applicants who are not already employed in Pakistan]",
+                                    "Where would you like to join in Pakistan after completion of your MS/MPhil/PhD studies? [only for those applicants who are not already employed in Pakistan] (300 words max)",
                                 name: "join_after_completion",
                                 type: "textarea",
+                                maxWords: 300
                             },
                         ].map((field) => (
                             <FormInput

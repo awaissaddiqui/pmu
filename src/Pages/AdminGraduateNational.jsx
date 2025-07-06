@@ -88,21 +88,17 @@ const AdminGraduateNational = () => {
                     { label: "CNIC No", name: "cnic_no" },
                     { label: "Father Name", name: "father_name" },
                     { label: "Father CNIC No", name: "father_cnic_no" },
-                    { label: "Passport No", name: "passport_no" },
-                    { label: "Passport Expiry Date", name: "passport_expiry_date" },
                     { label: "Date of Birth", name: "dob" },
                     { label: "Domicile", name: "domicile" },
                     { label: "Gender", name: "gender" },
-                    { label: "Age on closing date for admission", name: "age" },
                     { label: "Mailing Address", name: "mailing_address" },
                     { label: "Permanent Address", name: "permanent_address" },
                     { label: "Email", name: "email" },
                     { label: "Mobile 1", name: "mobile_1" },
                     { label: "Mobile 2", name: "mobile_2" },
                     { label: "Home", name: "home" },
-                    { label: "Fax", name: "fax" },
+                    { label: "WhatsApp", name: "whatsapp" },
                     { label: "Office", name: "office" },
-                    { label: "References in Pakistan", name: "references" },
                     { label: "Marital Status", name: "marital_status" },
                     ...(formData[0]?.marital_status === "married" ?
                         [
@@ -132,7 +128,7 @@ const AdminGraduateNational = () => {
                     </thead>
                     <tbody>
                         {[
-                            "SSC/Matric", "HSSC/Intermediate", "Bachelors (B.A, BSc, Hons. etc.)", "Masters or Equivalent", "M. Phil", "GRE/GAT (Subject/General)", "Medals (Gold/Silver/Bronze)", "Other (please specify)"]
+                            "SSC/Matric", "HSSC/Intermediate", "Bachelors (B.A, BSc) 14 Years", "BS Hons(16 Years)", "M. Phil", "GRE/GAT (Subject/General)", "MA/MSc"]
                             .map((title, rowIndex) => (
                                 <tr className='hover:bg-gray-100' key={rowIndex}>
                                     <td className="border border-gray-300 p-2 font-semibold">{title}</td>
@@ -143,6 +139,7 @@ const AdminGraduateNational = () => {
                                     <td className="border border-gray-300 p-2">{formData[0]?.education_details[rowIndex]?.cgpa}</td>
                                     <td className="border border-gray-300 p-2">{formData[0]?.education_details[rowIndex]?.institution}</td>
                                     <td className="border border-gray-300 p-2">{formData[0]?.education_details[rowIndex]?.["board/university"]}</td>
+                                    <td className="border border-gray-300 p-2">{formData[0]?.education_details[rowIndex]?.medals}</td>
                                 </tr>
                             ))}
                     </tbody>
@@ -156,16 +153,16 @@ const AdminGraduateNational = () => {
                     { label: "List of scholarships or fellowships held at present or in past", name: "scholarships_list" },
                     { label: "Indicate any academic honors/medals or prizes received", name: "academic_honors" },
                     { label: "Offer detail for MS/PhD/DPhil Program", name: "offer_detail" },
-                    { label: "Name of University", name: "university_name" },
+                    { label: "Name of University Degree", name: "university_degree_name" },
                     { label: "Date of Commencement of classes", name: "commencement_date" },
                     { label: "Date of Completion", name: "completion_date" },
-                    { label: "University Ref/ID Code", name: "university_code" },
+                    { label: "University Ref/ID/Registration Code", name: "university_code" },
                     { label: "Major area", name: "major_area" },
                     { label: "Specialization", name: "specialization" },
                     { label: "Title of MS/PhD/DPhil", name: "title" },
-                    { label: "Supervisor Name", name: "supervisor_name" },
-                    { label: "Supervisor Email", name: "supervisor_email" },
-                    { label: "Supervisor Contact", name: "supervisor_contact" },
+                    { label: "Supervisor/HOD Name", name: "supervisor_name" },
+                    { label: "Supervisor/HOD Email", name: "supervisor_email" },
+                    { label: "Supervisor/HOD Contact", name: "supervisor_contact" },
                     { label: "Closing date of admission of the institution", name: "closing_date" },
                     { label: "Research Publication (Use extra sheet where required)", name: "research_publication" },
                 ]}

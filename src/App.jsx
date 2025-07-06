@@ -70,10 +70,10 @@ function App() {
                   <Route path="/research/registration/coversheet/details/checklist" element={<ChecklistForm />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-                  <Route path="/admin/form-details/:email" element={<AdminFormDetails />} />
-                  <Route path="/admin/form-details-undergrad/:email" element={<AdminUndergradFormDetail />} />
-                  <Route path="/admin/form-details-graduate/:email" element={<AdminGraduateNational />} />
-                  <Route path="/admin/form-details-phd/:email" element={<AdminPhdInternational />} />
+                  <Route path="/admin/form-details/:email" element={<ProtectedRoute><AdminFormDetails /></ProtectedRoute>} />
+                  <Route path="/admin/form-details-undergrad/:email" element={<ProtectedRoute><AdminUndergradFormDetail /></ProtectedRoute>} />
+                  <Route path="/admin/form-details-graduate/:email" element={<ProtectedRoute><AdminGraduateNational /></ProtectedRoute>} />
+                  <Route path="/admin/form-details-phd/:email" element={<ProtectedRoute><AdminPhdInternational /></ProtectedRoute>} />
                   <Route path="*" element={<Error />} />
                 </Routes>
                 <Footer />

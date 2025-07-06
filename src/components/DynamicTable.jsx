@@ -48,6 +48,19 @@ const DynamicTable = ({ firstColumnTitle, headers, numRows, tableTitle, dispatch
         });
     }, [tableData, dispatch, tableTitle]);
 
+    // Function to determine input type based on header name
+    const getInputType = (header) => {
+        const numericHeaders = [
+            'salary', 'monthly salary', 'from other sources if any', 'total', 
+            'amount', 'rupees', 'marks obtained', 'total marks', 'cgpa', 
+            'per semester', 'per year', 'total expenses', 'expected amount',
+            'value in rs', 'engine cc'
+        ];
+        
+        const headerLower = header.toLowerCase();
+        return numericHeaders.some(term => headerLower.includes(term)) ? 'number' : 'text';
+    };
+
     return (
         <div className="overflow-x-auto">
             <table className="w-full border-collapse border border-gray-300">
@@ -75,14 +88,18 @@ const DynamicTable = ({ firstColumnTitle, headers, numRows, tableTitle, dispatch
                             {/* Generate input fields dynamically */}
                             {headers.slice(1).map((header, colIndex) => {
                                 const fieldName = header.toLowerCase().replace(/\s+/g, '_');
+                                const inputType = getInputType(header);
+                                
                                 return (
                                     <td key={colIndex} className="border border-gray-300 px-4 py-2">
                                         <input
-                                            type="text"
+                                            type={inputType}
                                             name={fieldName}
                                             className="w-full p-2 border rounded-md"
                                             value={tableData[rowIndex]?.[fieldName] || ""}
                                             onChange={(e) => handleInputChange(rowIndex, fieldName, e.target.value)}
+                                            min={inputType === "number" ? "0" : undefined}
+                                            step={inputType === "number" ? "0.01" : undefined}
                                         />
                                     </td>
                                 );

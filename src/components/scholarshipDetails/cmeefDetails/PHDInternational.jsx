@@ -644,7 +644,7 @@ const PHDInternational = () => {
                                 {[
                                     {
                                         label: "Full Name of Father",
-                                        label: "fatherName",
+                                        name: "fatherName",
                                         type: "text"
                                     },
                                     {
