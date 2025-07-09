@@ -3,9 +3,11 @@ import { Navigate } from 'react-router';
 import { useAuth } from './AuthProvider'; // Ensure you have this hook
 
 const ProtectedRoute = ({ children }) => {
-    const { user } = useAuth();
-
-    return user ? children : <Navigate to="/login" replace />;
+    const { user, role } = useAuth();
+    if (!user || role !== 'admin') {
+        return <Navigate to="/admin/login" replace />;
+    }
+    return children;
 };
 
 export default ProtectedRoute;

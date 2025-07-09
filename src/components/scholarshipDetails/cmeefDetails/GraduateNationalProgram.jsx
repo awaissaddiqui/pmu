@@ -114,6 +114,8 @@ const GraduateNationalProgram = () => {
                     "whatsapp",
                     "office",
                     "marital_status",
+                    "gre_gat_score",
+                    "gre_gat_date",
                     "scholarships_list",
                     "academic_honors",
                     "offer_detail",
@@ -446,12 +448,12 @@ const GraduateNationalProgram = () => {
                         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-6">
                             {[
                                 { label: "Full Name", name: "full_name", type: "text" },
-                                { label: "CNIC No", name: "cnic_no", type: "text" },
+                                { label: "CNIC No", name: "cnic_no", type: "number" },
                                 { label: "Father Name", name: "father_name", type: "text" },
                                 {
                                     label: "Father CNIC No",
                                     name: "father_cnic_no",
-                                    type: "text",
+                                    type: "number",
                                 },
                                 { label: "Date of Birth", name: "dob", type: "date" },
                                 {

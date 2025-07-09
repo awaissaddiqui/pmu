@@ -90,9 +90,9 @@ const UnNationalProgram = () => {
                         { name: "applicantName", label: "Applicant's Name", type: "text" },
                         { name: "cnic", label: "CNIC No.", type: "number" },
                         { name: "age", label: "Age", type: "number" },
-                        { name: "gender", label: "Gender", type: "radio", options: ["Male", "Female"] },
-                        { name: "maritalStatus", label: "Marital Status", type: "radio", options: ["Single", "Married", "Divorced"] },
-                        { name: "workingStatus", label: "Are you currently working?", type: "radio", options: ["Yes", "No"] },
+                        { name: "gender", label: "Gender", type: "select", options: ["Male", "Female"] },
+                        { name: "maritalStatus", label: "Marital Status", type: "select", options: ["Single", "Married", "Divorced"] },
+                        { name: "workingStatus", label: "Are you currently working?", type: "select", options: ["Yes", "No"] },
                         // { name: "domicile", label: "Domicile", type: "text" },
                         { name: "presentAddress", label: "Present Address", type: "text" },
                         { name: "permanentAddress", label: "Permanent Address", type: "text" },
@@ -100,7 +100,7 @@ const UnNationalProgram = () => {
                         { name: "designation", label: "Designation", type: "text" },
                         { name: "mobile", label: "Mobile", type: "number" },
                         { name: "email", label: "Email", type: "email" },
-                        ...(formData.workingStatus === "yes" ? [
+                        ...(formData.workingStatus === "Yes" ? [
                             { name: "grossIncome", label: "Total Monthly Gross Income (Pak Rs.)", type: "number" },
                             { name: "takeHomeIncome", label: "Total Monthly Take Home Income After Deduction of Taxes (Pak Rs.)", type: "number" }
                         ] : []
@@ -163,7 +163,7 @@ const UnNationalProgram = () => {
                 {/* Total Monthly Income */}
                 <div className="mb-3">
                     <label className="block font-medium">Total Monthly Income (including self-income, if applicable) in PKR</label>
-                    <input type="text"
+                    <input type="number"
                         name="totalMonthlyIncome"
                         value={formData.totalMonthlyIncome || ""}
                         onChange={handleChange}
@@ -173,7 +173,7 @@ const UnNationalProgram = () => {
                 {/* Family Members Studying */}
                 <div className="mb-3">
                     <label className="block font-medium">Brothers/Sisters/Children/Family Members Studying</label>
-                    <input type="text"
+                    <input type="number"
                         name="familyMembersStudying"
                         value={formData.familyMembersStudying || ""}
                         onChange={handleChange}
@@ -196,8 +196,8 @@ const UnNationalProgram = () => {
                         { name: "totalFees", label: "Total Fees and Tuition Charges", type: "number" },
                         { name: "fatherName", label: "Father's Name", type: "text" },
                         { name: "computerizedNIC", label: "Computerized N.I.C No", type: "number" },
-                        { name: "status", label: "Status", type: "radio", options: ["Alive", "Decease"] },
-                        { name: "professionalStatus", label: "Professional Status", type: "radio", options: ["Employed", "Retired", "Business Owner"] },
+                        { name: "status", label: "Status", type: "select", options: ["Alive", "Decease"] },
+                        { name: "professionalStatus", label: "Professional Status", type: "select", options: ["Employed", "Retired", "Business Owner"] },
                         { name: "companyName", label: "Name of Company/Employer", type: "text" },
                         { name: "telOff", label: "Tel (Off)", type: "number" },
                         { name: "mobile", label: "Mobile", type: "number" },
@@ -274,7 +274,7 @@ const UnNationalProgram = () => {
                         {
                             name: "otherAccommodationType",
                             label: "Any other House/Flat owned by the parent(s) or Guardian(s) ",
-                            type: "radio",
+                            type: "select",
                             options: ["Yes", "No"],
                         }
                     ].map((field) => (
@@ -289,7 +289,7 @@ const UnNationalProgram = () => {
 
                 {/* Table  */}
                 {
-                    formData.otherAccommodationType === "yes" && (
+                    formData.otherAccommodationType === "Yes" && (
                         <DynamicTable
                             firstColumnTitle="#"
                             headers={["", "Location/Address", "Bedrooms", "Air Conditioners", "Monthly Rent", "Annual Rent"]}

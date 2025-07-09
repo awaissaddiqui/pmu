@@ -36,8 +36,10 @@ import { PHDInternationalFormProvider } from './Context/PHDInternationalFormProv
 import AdminGraduateNational from './Pages/AdminGraduateNational'
 import AdminPhdInternational from './Pages/AdminPhdInternational'
 import ScrollToTop from './components/ScrollToTop'
-
-
+import UserLogin from './auth/UserLogin'
+import UserSignup from './auth/UserSignup'
+import UserProfile from './Pages/UserProfile'
+import UserProtectedRoute from './Context/UserProtectedRoute'
 function App() {
   return (
     <AuthProvider>
@@ -52,29 +54,35 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/scholarships" element={<Scholarships />} />
                   <Route path="/scholarships/CMEEF/details" element={<CMEEF />} />
-                  <Route path="/scholarships/CMEEF/details/UnNationalProgram" element={<UnNationalProgram />} />
-                  <Route path="/scholarships/CMEEF/details/UnNationalProgram/page2" element={<UnNationalProgramPage2 />} />
-                  <Route path="/scholarships/CMEEF/details/GraduateNationalProgram" element={<GraduateNationalProgram />} />
-                  <Route path="/scholarships/CMEEF/details/PHDInternational" element={<PHDInternational />} />
+
+                  <Route path='/user/login' element={<UserLogin />} />
+                  <Route path='/user/registration' element={<UserSignup />} />
+                  <Route path="/user/scholarships/profile" element={<UserProtectedRoute><UserProfile /></UserProtectedRoute>} />
+                  <Route path="/scholarships/CMEEF/details/UnNationalProgram" element={<UserProtectedRoute><UnNationalProgram /></UserProtectedRoute>} />
+                  <Route path="/scholarships/CMEEF/details/UnNationalProgram/page2" element={<UserProtectedRoute><UnNationalProgramPage2 /></UserProtectedRoute>} />
+                  <Route path="/scholarships/CMEEF/details/GraduateNationalProgram" element={<UserProtectedRoute><GraduateNationalProgram /></UserProtectedRoute>} />
+                  <Route path="/scholarships/CMEEF/details/PHDInternational" element={<UserProtectedRoute><PHDInternational /></UserProtectedRoute>} />
                   <Route path="/scholarships/HEEF/details" element={<HEEF />} />
                   <Route path="/projects" element={<Projects />} />
                   <Route path="/advertisement" element={<Jobs />} />
                   <Route path="/alumni" element={<Alumni />} />
                   <Route path="/research" element={<Research />} />
-                  <Route path="/research/registration" element={<ResearchForm />} />
-                  <Route path="/research/registration/coversheet" element={<CoverSheet />} />
-                  <Route path="/research/registration/coversheet/details1" element={<ProjectDetails_1 />} />
-                  <Route path="/research/registration/coversheet/details2" element={<ProjectDetails_2 />} />
-                  <Route path="/research/registration/coversheet/details3" element={<ProjectDetails_3 />} />
-                  <Route path="/research/registration/coversheet/details/information" element={<InformationForm />} />
-                  <Route path="/research/registration/coversheet/details/checklist" element={<ChecklistForm />} />
-                  <Route path="/login" element={<Login />} />
+                  <Route path="/research/registration" element={<UserProtectedRoute><ResearchForm /></UserProtectedRoute>} />
+                  <Route path="/research/registration/coversheet" element={<UserProtectedRoute><CoverSheet /></UserProtectedRoute>} />
+                  <Route path="/research/registration/coversheet/details1" element={<UserProtectedRoute><ProjectDetails_1 /></UserProtectedRoute>} />
+                  <Route path="/research/registration/coversheet/details2" element={<UserProtectedRoute><ProjectDetails_2 /></UserProtectedRoute>} />
+                  <Route path="/research/registration/coversheet/details3" element={<UserProtectedRoute><ProjectDetails_3 /></UserProtectedRoute>} />
+                  <Route path="/research/registration/coversheet/details/information" element={<UserProtectedRoute><InformationForm /></UserProtectedRoute>} />
+                  <Route path="/research/registration/coversheet/details/checklist" element={<UserProtectedRoute><ChecklistForm /></UserProtectedRoute>} />
+
+                  <Route path="/admin/login" element={<Login />} />
                   <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
                   <Route path="/admin/form-details/:email" element={<ProtectedRoute><AdminFormDetails /></ProtectedRoute>} />
                   <Route path="/admin/form-details-undergrad/:email" element={<ProtectedRoute><AdminUndergradFormDetail /></ProtectedRoute>} />
                   <Route path="/admin/form-details-graduate/:email" element={<ProtectedRoute><AdminGraduateNational /></ProtectedRoute>} />
                   <Route path="/admin/form-details-phd/:email" element={<ProtectedRoute><AdminPhdInternational /></ProtectedRoute>} />
                   <Route path="*" element={<Error />} />
+
                 </Routes>
                 <Footer />
               </Router>

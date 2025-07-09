@@ -41,7 +41,7 @@ function Research() {
                 <a className="text-blue-600 underline cursor-pointer mb-6" href="/reasearchInstruction.pdf" download>Download Instructions</a>
                 <Link
                     className="px-6 py-2 bg-green-600 text-white text-lg font-semibold rounded-lg hover:bg-green-700 transition"
-                    to="/research/registration"
+                    to="/user/login?redirect=/research/registration"
                 >
                     Apply Here
                 </Link>

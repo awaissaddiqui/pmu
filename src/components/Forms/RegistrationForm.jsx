@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useResearchForm } from "../../Context/ResearchFormContext";
 import Button from "./Button";
 import Alert from "../Alert";
@@ -17,7 +17,7 @@ const RegistrationForm = () => {
             {showAlert && (
                 <Alert
                     string="Before filling the form, you must have admission in your desired program."
-                    onOkay={() => setShowAlert(false)} // 🛑 Close alert on Okay
+                    onOkay={() => setShowAlert(false)}
                 />
             )}
             <form className="relative bg-opacity-50 space-y-4 grid grid-cols-1 md:grid-cols-3 gap-4 p-6 rounded-lg shadow-lg h-full w-full max-w-full pb-20">

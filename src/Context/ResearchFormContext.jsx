@@ -1,7 +1,7 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import { db } from "../Firebase";
 import { doc, setDoc } from "firebase/firestore";
-
+import { useAuth } from "./AuthProvider";
 // Create the context
 const ResearchFormContext = createContext();
 
@@ -11,6 +11,8 @@ const researchFormReducer = (state, action) => {
     switch (action.type) {
         case "UPDATE_FIELD":
             return { ...state, [action.field]: action.value };
+        case "SET_FORM_DATA":
+            return { ...action.data };
         case "RESET_FORM":
             return {}; // Reset form after successful submission
         default:
@@ -20,7 +22,21 @@ const researchFormReducer = (state, action) => {
 
 // Provider component
 export const ResearchFormProvider = ({ children }) => {
-    const [formData, dispatch] = useReducer(researchFormReducer, {});
+    const { user } = useAuth(); // Get current authenticated user
+    const userId = user?.uid;
+    const userEmail = user?.email;
+    // Load initial state from localStorage when component mounts
+    const initialState = userId ?
+        JSON.parse(localStorage.getItem(`research_form_${userId}`) || '{}') :
+        {};
+    const [formData, dispatch] = useReducer(researchFormReducer, initialState);
+
+    // Save to localStorage whenever formData changes
+    useEffect(() => {
+        if (userId && Object.keys(formData).length > 0) {
+            localStorage.setItem(`research_form_${userId}`, JSON.stringify(formData));
+        }
+    }, [formData, userId]);
 
     // Submit function
     const submitForm = async () => {
@@ -37,14 +53,25 @@ export const ResearchFormProvider = ({ children }) => {
                 return;
             }
 
-            // Submit data to Firestore
-            const docRef = doc(db, "research-forms", formData.pi_email);
-            await setDoc(docRef, formData);
+            // Add user information to the form data
+            const formWithUserInfo = {
+                ...formData,
+                userId: userId || '',
+                userEmail: userEmail || '',
+                submittedAt: new Date().toISOString()
+            };
+
+            const docId = formData.pi_email || userEmail;
+            const docRef = doc(db, "research-forms", docId);
+            await setDoc(docRef, formWithUserInfo);
 
             alert("Form Submitted Successfully");
-            // Reset form after submission
+
+            // if (userId) {
+            //     localStorage.removeItem(`research_form_${userId}`);
+            // }
             // dispatch({ type: "RESET_FORM" });
-            // console.log(formData);
+
         } catch (error) {
             console.error(error);
             alert("An error occurred while submitting the form. Please try again.");

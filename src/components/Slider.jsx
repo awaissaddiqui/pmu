@@ -16,7 +16,7 @@ const Slider = ({ isNavigation = false, isRounded = "" }) => {
                 modules={[Autoplay, Navigation]}
                 navigation={isNavigation}
                 autoplay={{ delay: 3000 }}
-                loop
+                loop={true}
                 className="w-full"
             >
                 {[Image2, Image1, Image3, Image4].map((image, index) => (

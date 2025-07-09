@@ -77,14 +77,14 @@ const CMEEF = () => {
                     <li>The candidates directly applying in the selected institution in the approved discipline.</li>
                 </ul>
                 <div className='mt-6'>
-                    <Link to="/scholarships/CMEEF/details/UnNationalProgram" className=" mt-2 bg-primary hover:bg-secondary cursor-pointer text-white font-bold w-full md:w-40 py-3.5 px-10 rounded">Apply Now</Link>
+                    <Link to="/user/login?redirect=/scholarships/CMEEF/details/UnNationalProgram" className=" mt-2 bg-primary hover:bg-secondary cursor-pointer text-white font-bold w-full md:w-40 py-3.5 px-10 rounded">Apply Now</Link>
                 </div>
                 <h2 className="text-lg font-semibold mt-10">Graduate National Program:</h2>
                 <ul className="list-none ml-5 text-gray-700">
                     <li>The candidates directly applying in the selected institution in the approved discipline.</li>
                 </ul>
                 <div className='mt-6'>
-                    <Link to="/scholarships/CMEEF/details/GraduateNationalProgram" className="bg-primary hover:bg-secondary cursor-pointer text-white font-bold w-full md:w-40 py-3.5 px-10 rounded">Apply Now</Link>
+                    <Link to="/user/login?redirect=/scholarships/CMEEF/details/GraduateNationalProgram" className="bg-primary hover:bg-secondary cursor-pointer text-white font-bold w-full md:w-40 py-3.5 px-10 rounded">Apply Now</Link>
                 </div>
             </div>
 
@@ -242,7 +242,7 @@ const CMEEF = () => {
                     specified in the Rules.The candidate must submit the application forms along with all the supporting
                     documents to Project Management Unit Office well before the closing date.</p>
                 <div className='mt-8'>
-                    <Link to="/scholarships/CMEEF/details/PHDInternational" className="bg-primary hover:bg-secondary cursor-pointer text-white font-bold w-full md:w-40 py-3.5 px-10 rounded">Apply Now</Link>
+                    <Link to="/user/login?redirect=/scholarships/CMEEF/details/PHDInternational" className="bg-primary hover:bg-secondary cursor-pointer text-white font-bold w-full md:w-40 py-3.5 px-10 rounded">Apply Now</Link>
                 </div>
             </div>
 

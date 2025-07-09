@@ -150,6 +150,8 @@ const AdminGraduateNational = () => {
                 title="Additional Information"
                 data={formData?.[0] || {}}
                 fields={[
+                    { label: "GRE/GAT Score", name: "gre_gat_score" },
+                    { label: "Result Date", name: "gre_gat_date" },
                     { label: "List of scholarships or fellowships held at present or in past", name: "scholarships_list" },
                     { label: "Indicate any academic honors/medals or prizes received", name: "academic_honors" },
                     { label: "Offer detail for MS/PhD/DPhil Program", name: "offer_detail" },

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { auth } from '../Firebase';
+import { auth, db } from '../Firebase';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from 'react-router';
 
 const Login = () => {
@@ -12,38 +13,53 @@ const Login = () => {
 
     // Monitor Auth State
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
-                navigate('/admin'); // Redirect if user is already logged in
+                // Check role on auto-login
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                const userRole = userDoc.exists() ? userDoc.data().role : null;
+                if (userRole === "admin") {
+                    navigate('/admin');
+                } else {
+                    setError("This route is for admins only.");
+                    await auth.signOut();
+                }
             }
         });
-        return () => unsubscribe(); // Cleanup on unmount
+        return () => unsubscribe();
     }, [navigate]);
 
-    const handleSubmitForm = (e) => {
+    const handleSubmitForm = async (e) => {
         e.preventDefault();
         setError("");
         setLoading(true);
 
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+            const userRole = userDoc.exists() ? userDoc.data().role : null;
+
+            if (userRole === "admin") {
                 navigate('/admin');
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                if (errorCode === 'auth/user-not-found') {
-                    setError('User not found');
-                } else if (errorCode === 'auth/wrong-password' || errorCode === 'auth/invalid-email' || errorCode === 'auth/invalid-credential') {
-                    setError('Invalid Email or password');
-                } else if (errorCode === 'auth/too-many-requests') {
-                    setError('Too many requests. Please try again later.');
-                } else if (errorCode === 'auth/network-request-failed') {
-                    setError('Network error. Please check your internet connection.');
-                } else {
-                    setError('Something went wrong. Please try again later.');
-                }
-                setLoading(false);
-            });
+            } else {
+                setError("This route is for admins only.");
+                await auth.signOut();
+            }
+        } catch (error) {
+            const errorCode = error.code;
+            if (errorCode === 'auth/user-not-found') {
+                setError('User not found');
+            } else if (errorCode === 'auth/wrong-password' || errorCode === 'auth/invalid-email' || errorCode === 'auth/invalid-credential') {
+                setError('Invalid Email or password');
+            } else if (errorCode === 'auth/too-many-requests') {
+                setError('Too many requests. Please try again later.');
+            } else if (errorCode === 'auth/network-request-failed') {
+                setError('Network error. Please check your internet connection.');
+            } else {
+                setError('Something went wrong. Please try again later.');
+            }
+        }
+        setLoading(false);
     };
 
     return (
