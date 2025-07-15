@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useResearchForm } from "../../Context/ResearchFormContext";
 import Button from './Button';
 import { supabaseDb } from '../../Firebase';
 
 const CoverSheet = () => {
-    const { formData, dispatch } = useResearchForm();
+    const { formData, dispatch, saveForm, saveStatus, isLoading } = useResearchForm();
     const [isUploading, setIsUploading] = useState(false);
+    const [isFileUploaded, setIsFileUploaded] = useState(false);
+
+    // Restore file upload state if file already uploaded
+    useEffect(() => {
+        if (formData.upload_signed_declaration) {
+            setIsFileUploaded(true);
+        }
+    }, [formData.upload_signed_declaration]);
+
     // Handle File Upload
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
@@ -14,21 +23,20 @@ const CoverSheet = () => {
         document.body.style.cursor = "wait";
 
         try {
-            const { data, error } = await supabaseDb.storage.from('pmu_forms').upload(`${formData.pi_email}/signed_declaration_file`, file);
+            const filePath = `${formData.pi_email}/signed_declaration_file`;
+            const { error } = await supabaseDb.storage.from('pmu_forms').upload(filePath, file, { upsert: true });
             if (error) throw error;
-            const downloadURL = await supabaseDb.storage.from('pmu_forms').getPublicUrl(`${formData.pi_email}/signed_declaration_file`);
+            const downloadURL = await supabaseDb.storage.from('pmu_forms').getPublicUrl(filePath);
 
             dispatch({
                 type: "UPDATE_FIELD",
                 field: "upload_signed_declaration",
                 value: downloadURL.data.publicUrl
             });
-
-
-
-
+            setIsFileUploaded(true);
         } catch (error) {
             console.error(error);
+            setIsFileUploaded(false);
         } finally {
             setIsUploading(false);
             document.body.style.cursor = "default";
@@ -84,37 +92,55 @@ const CoverSheet = () => {
                 {/* Upload Signed Declaration */}
                 <div className="col-span-full">
                     <label className="block text-sm font-semibold mb-2">Upload Signed Declaration</label>
-
                     <div className="flex items-center space-x-4">
                         <label
                             htmlFor="upload_signed_declaration"
-                            className="cursor-pointer bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition"
+                            className={`cursor-pointer bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition ${isUploading ? "opacity-70 cursor-wait" : ""}`}
                         >
-                            Choose File
+                            {isUploading ? "Uploading..." : "Choose File"}
                         </label>
-                        <span className="text-gray-600 text-sm">
-                            {formData.upload_signed_declaration?.name || "No file chosen"}
-                        </span>
+                        {isFileUploaded && formData.upload_signed_declaration && (
+                            <a
+                                href={formData.upload_signed_declaration}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-green-600 underline text-sm"
+                            >
+                                View Uploaded File
+                            </a>
+                        )}
+                        {!isFileUploaded && (
+                            <span className="text-gray-600 text-sm">
+                                No file chosen
+                            </span>
+                        )}
                     </div>
-
                     <input
                         id="upload_signed_declaration"
                         type="file"
                         name="upload_signed_declaration"
                         onChange={handleFileUpload}
                         className="hidden"
+                        disabled={isUploading}
                         required
                     />
-
-                    {formData.upload_signed_declaration && (
+                    {isFileUploaded && (
                         <p className="text-green-600 mt-2 font-medium">
                             ✅ File Uploaded Successfully
                         </p>
                     )}
                 </div>
 
-
-                <div className="flex justify-end mt-6 md:absolute md:bottom-4 md:right-4 w-full">
+                {/* Save Button */}
+                <div className="flex flex-col md:flex-row justify-end mt-6 md:absolute md:bottom-4 md:right-4 w-full gap-4">
+                    <button
+                        type="button"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded"
+                        onClick={saveForm}
+                        disabled={isUploading || isLoading || saveStatus === "saving"}
+                    >
+                        {saveStatus === "saving" ? "Saving..." : "Save"}
+                    </button>
                     <Button nextString="/research/registration/coversheet/details1" requiredFields={[
                         "proposal_domain", "research_area", "research_subject", "specialization_field", "sub_specialization",
                         "research_location", "requested_funding", "project_duration", "project_start_date", "project_end_date",
@@ -128,7 +154,16 @@ const CoverSheet = () => {
                         "upload_signed_declaration"
                     ]} />
                 </div>
-
+                {saveStatus === "saved" && (
+                    <div className="text-green-600 mt-2 font-medium text-right col-span-full">
+                        ✅ Progress saved!
+                    </div>
+                )}
+                {saveStatus === "error" && (
+                    <div className="text-red-600 mt-2 font-medium text-right col-span-full">
+                        ❌ Error saving progress. Please try again.
+                    </div>
+                )}
             </form>
         </div>
     );

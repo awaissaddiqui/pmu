@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { signOut } from "firebase/auth";
 import { auth, db } from "../Firebase";
 import { useNavigate } from "react-router";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { useAuth } from "../Context/AuthProvider";
-
+import { useFormProgress } from "../Context/FormProgressContext";
+import { trefoil } from 'ldrs';
+// Register the trefoil component
+trefoil.register();
 const UserProfile = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
+    const { formProgresses = {}, getFormProgress } = useFormProgress();
     const [userProfile, setUserProfile] = useState({
         fullName: "",
         mobile: "",
@@ -38,7 +42,7 @@ const UserProfile = () => {
         fetchUserData();
     }, [user]);
 
-    // Fetch applications (both from Firestore and localStorage)
+    // Fetch applications
     useEffect(() => {
         const fetchApplications = async () => {
             if (!user?.uid) return;
@@ -47,104 +51,64 @@ const UserProfile = () => {
             try {
                 const forms = [];
 
-                // 1. Get applications from Firestore (submitted forms)
-                // Undergraduate forms
-                const undergradQuery = query(collection(db, "undergraduate-forms"),
-                    where("userId", "==", user.uid));
-                const undergradSnapshot = await getDocs(undergradQuery);
-                undergradSnapshot.forEach(doc => {
-                    forms.push({
-                        id: doc.id,
-                        program: "Undergraduate National Program",
-                        cycle: "CMEEF Scholarship",
-                        status: "Submitted",
-                        type: "undergraduate",
-                        ...doc.data()
-                    });
+                // // 1. Add form progress items (in-progress forms) - Only for current user
+                // console.log("All form progresses:", formProgresses);
+                // console.log("Current user ID:", user.uid);
+
+                Object.entries(formProgresses).forEach(([formType, progress]) => {
+                    // Only show if not submitted (to avoid duplicate display)
+                    if (progress.status !== "submitted") {
+                        forms.push({
+                            id: progress.id,
+                            program: getFormTitle(formType),
+                            cycle: progress.formType === "research" ? "Research Program" : "CMEEF Scholarship",
+                            status: progress.status || "In Progress",
+                            type: formType,
+                            lastUpdated: progress.lastUpdated
+                        });
+                    }
                 });
 
-                // Continue with other form types...
+                // const getFormProgress = async (key) => {
+                //     const data = await getFormProgress(key)
+                //     console.log(data);
+                // }
 
-                // 2. Get in-progress forms from localStorage
-                // Undergraduate forms in progress
-                const localUndergradForm = localStorage.getItem(`undergraduate_form_${user.uid}`);
-                if (localUndergradForm) {
+                // 2. Add submitted forms from Firestore - Only for current user
+                const collections = [
+                    { name: "undergraduate-forms", program: "Undergraduate National Program", type: "undergraduate" },
+                    { name: "graduate-forms", program: "Graduate National Program", type: "graduate" },
+                    { name: "phd-forms", program: "PhD International Program", type: "phd" },
+                    { name: "research-forms", program: "Research Registration", type: "research" }
+                ];
+
+                // Query each collection for the current user's submissions
+                for (const collectionInfo of collections) {
                     try {
-                        const formData = JSON.parse(localUndergradForm);
-                        if (Object.keys(formData).length > 0) {
+                        const q = query(
+                            collection(db, collectionInfo.name),
+                            where("userId", "==", user.uid)
+                        );
+                        const querySnapshot = await getDocs(q);
+
+                        querySnapshot.forEach(doc => {
                             forms.push({
-                                id: `local-undergrad-${Date.now()}`,
-                                program: "Undergraduate National Program",
-                                cycle: "CMEEF Scholarship",
-                                status: "In Progress",
-                                type: "undergraduate-draft"
+                                id: doc.id,
+                                program: collectionInfo.program,
+                                cycle: collectionInfo.type === "research" ? "Research Program" : "CMEEF Scholarship",
+                                status: "Submitted",
+                                type: collectionInfo.type,
+                                submittedAt: doc.data().submittedAt,
+                                ...doc.data()
                             });
-                        }
-                    } catch (e) {
-                        console.error("Error parsing localStorage form data", e);
+                        });
+                    } catch (error) {
+                        console.error(`Error fetching ${collectionInfo.name}:`, error);
                     }
                 }
 
-                // Graduate forms in progress
-                const localGraduateForm = localStorage.getItem(`graduate_form_${user.uid}`);
-                if (localGraduateForm) {
-                    try {
-                        const formData = JSON.parse(localGraduateForm);
-                        if (Object.keys(formData).length > 0) {
-                            forms.push({
-                                id: `local-graduate-${Date.now()}`,
-                                program: "Graduate National Program",
-                                cycle: "CMEEF Scholarship",
-                                status: "In Progress",
-                                type: "graduate-draft"
-                            });
-                        }
-                    } catch (e) {
-                        console.error("Error parsing localStorage form data", e);
-                    }
-                }
-
-                // PhD forms in progress
-                const localPhdForm = localStorage.getItem(`phd_form_${user.uid}`);
-                if (localPhdForm) {
-                    try {
-                        const formData = JSON.parse(localPhdForm);
-                        if (Object.keys(formData).length > 0) {
-                            forms.push({
-                                id: `local-phd-${Date.now()}`,
-                                program: "PhD International Program",
-                                cycle: "CMEEF Scholarship",
-                                status: "In Progress",
-                                type: "phd-draft"
-                            });
-                        }
-                    } catch (e) {
-                        console.error("Error parsing localStorage form data", e);
-                    }
-                }
-
-                // Research forms in progress
-                const localResearchForm = localStorage.getItem(`research_form_${user.uid}`);
-                if (localResearchForm) {
-                    try {
-                        const formData = JSON.parse(localResearchForm);
-                        if (Object.keys(formData).length > 0) {
-                            forms.push({
-                                id: `local-research-${Date.now()}`,
-                                program: "Research Registration",
-                                cycle: "Research Program",
-                                status: "In Progress",
-                                type: "research-draft"
-                            });
-                        }
-                    } catch (e) {
-                        console.error("Error parsing localStorage form data", e);
-                    }
-                }
-
+                console.log("Final applications array (user-specific):", forms);
                 setApplications(forms);
-                // Log after state update
-                console.log("Forms loaded:", forms.length);
             } catch (error) {
                 console.error("Error fetching applications:", error);
             } finally {
@@ -153,20 +117,31 @@ const UserProfile = () => {
         };
 
         fetchApplications();
-    }, [user]);
+    }, [user, formProgresses]);
+
+    // Helper function to get friendly form name
+    const getFormTitle = (formType) => {
+        switch (formType) {
+            case "undergraduate": return "Undergraduate National Program";
+            case "graduate": return "Graduate National Program";
+            case "phd": return "PhD International Program";
+            case "research": return "Research Registration";
+            default: return formType || "Unknown Program";
+        }
+    };
 
     const handleContinueForm = (type) => {
         switch (type) {
-            case "undergraduate-draft":
+            case "undergraduate":
                 navigate("/scholarships/CMEEF/details/UnNationalProgram");
                 break;
-            case "graduate-draft":
+            case "graduate":
                 navigate("/scholarships/CMEEF/details/GraduateNationalProgram");
                 break;
-            case "phd-draft":
+            case "phd":
                 navigate("/scholarships/CMEEF/details/PHDInternational");
                 break;
-            case "research-draft":
+            case "research":
                 navigate("/research/registration");
                 break;
             default:
@@ -176,12 +151,16 @@ const UserProfile = () => {
     };
 
     const handleLogout = async () => {
-        await signOut(auth);
-        navigate("/user/login");
+        try {
+            await signOut(auth);
+            navigate("/user/login");
+        } catch (error) {
+            console.error("Error signing out:", error);
+        }
     };
 
     return (
-        <div className="flex flex-col md:flex-row gap-8 w-full max-w-5xl mx-auto py-8">
+        <div className="flex flex-col md:flex-row gap-8 w-full max-w-full mx-auto py-8">
             {/* Profile Section */}
             <div className="md:w-1/3">
                 <div className="bg-white rounded-lg shadow p-6 w-full max-w-xs mx-auto">
@@ -247,11 +226,21 @@ const UserProfile = () => {
                     <h2 className="text-2xl font-bold text-center mb-6">My Applications</h2>
                     <div className="overflow-x-auto">
                         {loading ? (
-                            <div className="text-center py-4">Loading your applications...</div>
+                            <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50">
+                                <l-trefoil
+                                    size="40"
+                                    stroke="4"
+                                    stroke-length="0.15"
+                                    bg-opacity="0.1"
+                                    speed="1.4"
+                                    color="white"
+                                ></l-trefoil>
+                            </div>
+
                         ) : (
                             <table className="min-w-full border border-gray-200 rounded-lg">
                                 <thead>
-                                    <tr className="bg-gray-100 text-gray-700">
+                                    <tr className="bg-secondary text-white">
                                         <th className="py-2 px-4 border-b">#</th>
                                         <th className="py-2 px-4 border-b">Program</th>
                                         <th className="py-2 px-4 border-b">Cycle</th>
@@ -284,12 +273,12 @@ const UserProfile = () => {
                                                 <td className="py-2 px-4">
                                                     <button
                                                         onClick={() => handleContinueForm(app.type)}
-                                                        className={`px-4 py-1 rounded transition ${app.type.includes("draft")
-                                                                ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
-                                                                : "bg-green-100 text-green-800 hover:bg-green-200"
+                                                        className={`px-4 py-1 rounded transition ${app.status === "In Progress"
+                                                            ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
+                                                            : "bg-green-100 text-green-800 hover:bg-green-200"
                                                             }`}
                                                     >
-                                                        {app.type.includes("draft") ? "Continue" : "View Details"}
+                                                        {app.status === "In Progress" ? "Continue" : "View Details"}
                                                     </button>
                                                 </td>
                                             </tr>

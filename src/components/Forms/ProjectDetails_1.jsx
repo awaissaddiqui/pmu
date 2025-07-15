@@ -3,7 +3,7 @@ import { useResearchForm } from "../../Context/ResearchFormContext";
 import Button from './Button';
 
 const ProjectDetails_1 = () => {
-    const { formData, dispatch } = useResearchForm();
+    const { formData, dispatch, saveForm, saveStatus, isLoading } = useResearchForm();
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -32,8 +32,16 @@ const ProjectDetails_1 = () => {
                     </label>
                 ))}
 
-                {/* Submit Button */}
-                <div className="flex justify-end mt-6 md:absolute md:bottom-4 md:right-4 w-full">
+                {/* Button Container */}
+                <div className="flex flex-col md:flex-row justify-end mt-6 md:absolute md:bottom-4 md:right-4 w-full gap-4">
+                    <button
+                        type="button"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded"
+                        onClick={saveForm}
+                        disabled={isLoading || saveStatus === "saving"}
+                    >
+                        {saveStatus === "saving" ? "Saving..." : "Save"}
+                    </button>
                     <Button nextString="/research/registration/coversheet/details2" requiredFields={
                         [
                             "project_summary", "goals_objectives", "hypothesis", "applied_goals",
@@ -41,6 +49,16 @@ const ProjectDetails_1 = () => {
                         ]
                     } />
                 </div>
+                {saveStatus === "saved" && (
+                    <div className="text-green-600 mt-2 font-medium text-right col-span-full">
+                        ✅ Progress saved!
+                    </div>
+                )}
+                {saveStatus === "error" && (
+                    <div className="text-red-600 mt-2 font-medium text-right col-span-full">
+                        ❌ Error saving progress. Please try again.
+                    </div>
+                )}
             </form>
         </div>
     );

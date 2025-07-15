@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import BackButton from "../components/BackButton";
 
 const AdminUndergradFormDetail = () => {
     const [formData, setFormData] = useState([]);
@@ -26,6 +27,7 @@ const AdminUndergradFormDetail = () => {
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
             <h2 className="text-3xl font-bold text-center mb-6">Undergraduate Form Details</h2>
+            <BackButton />
             {/* Personal Details name, uniseristy etc */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-white p-6 shadow-md rounded-lg">
                 {[

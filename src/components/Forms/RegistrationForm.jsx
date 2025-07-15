@@ -4,7 +4,7 @@ import Button from "./Button";
 import Alert from "../Alert";
 
 const RegistrationForm = () => {
-    const { formData, dispatch } = useResearchForm();
+    const { formData, dispatch, saveForm, saveStatus, isLoading } = useResearchForm();
     const [showAlert, setShowAlert] = useState(true);
 
     // Handle form input changes
@@ -289,15 +289,37 @@ const RegistrationForm = () => {
 
 
                 {/* Buttons Container */}
-                <div className="flex justify-end mt-6 md:absolute md:bottom-4 md:right-4 w-full">
-                    <Button nextString="/research/registration/coversheet" requiredFields={[
-                        "title", "subject", "major_field", "minor_field", "funds_requested",
-                        "duration", "location", "start_date", "turnitin_index",
-                        "pi_name", "pi_province", "pi_university", "pi_designation",
-                        "pi_status", "pi_department", "pi_office_address",
-                        "pi_cnic", "pi_email", "pi_phone", "beneficiary_sector"
-                    ]} backBtnDisable={true} />
+                <div className="flex flex-col md:flex-row justify-end mt-6 md:absolute md:bottom-4 md:right-4 w-full gap-4">
+                    <button
+                        type="button"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded"
+                        onClick={saveForm}
+                        disabled={isLoading || saveStatus === "saving"}
+                    >
+                        {saveStatus === "saving" ? "Saving..." : "Save"}
+                    </button>
+                    <Button
+                        nextString="/research/registration/coversheet"
+                        requiredFields={[
+                            "title", "subject", "major_field", "minor_field", "funds_requested",
+                            "duration", "location", "start_date", "turnitin_index",
+                            "pi_name", "pi_province", "pi_university", "pi_designation",
+                            "pi_status", "pi_department", "pi_office_address",
+                            "pi_cnic", "pi_email", "pi_phone", "beneficiary_sector"
+                        ]}
+                        backBtnDisable={true}
+                    />
                 </div>
+                {saveStatus === "saved" && (
+                    <div className="text-green-600 mt-2 font-medium text-right col-span-full">
+                        ✅ Progress saved!
+                    </div>
+                )}
+                {saveStatus === "error" && (
+                    <div className="text-red-600 mt-2 font-medium text-right col-span-full">
+                        ❌ Error saving progress. Please try again.
+                    </div>
+                )}
             </form>
         </div>
     );

@@ -1,14 +1,30 @@
 import { useEffect, useState } from "react";
 
-const DynamicTable = ({ firstColumnTitle, headers, numRows, tableTitle, dispatch }) => {
+const DynamicTable = ({ firstColumnTitle, headers, numRows, tableTitle, dispatch, formData = {} }) => {
     // Helper to create an empty row object
     const createEmptyRow = () =>
         Object.fromEntries(headers.slice(1).map(header => [header.toLowerCase().replace(/\s+/g, '_'), ""]));
 
-    // Initialize table data
-    const [tableData, setTableData] = useState(
-        Array(numRows).fill().map(() => createEmptyRow())
-    );
+    // Initialize table data from formData if available
+    const [tableData, setTableData] = useState(() => {
+        // Check if we have existing data for this table
+        const existingData = formData?.[tableTitle] || [];
+
+        if (existingData.length > 0) {
+            console.log(`Loading existing data for table ${tableTitle}:`, existingData);
+            // If we have data but not enough rows, add empty ones
+            if (existingData.length < numRows) {
+                return [
+                    ...existingData,
+                    ...Array(numRows - existingData.length).fill().map(() => createEmptyRow())
+                ];
+            }
+            return existingData;
+        }
+
+        // If no existing data, create empty rows
+        return Array(numRows).fill().map(() => createEmptyRow());
+    });
 
     // Sync tableData length with numRows
     useEffect(() => {
@@ -38,7 +54,7 @@ const DynamicTable = ({ firstColumnTitle, headers, numRows, tableTitle, dispatch
     // Update context state on change
     useEffect(() => {
         const filteredData = tableData.filter(row =>
-            Object.values(row).some(value => value.trim() !== "")
+            Object.values(row).some(value => value?.trim?.() !== "")
         );
 
         dispatch({
@@ -51,12 +67,12 @@ const DynamicTable = ({ firstColumnTitle, headers, numRows, tableTitle, dispatch
     // Function to determine input type based on header name
     const getInputType = (header) => {
         const numericHeaders = [
-            'salary', 'monthly salary', 'from other sources if any', 'total', 
-            'amount', 'rupees', 'marks obtained', 'total marks', 'cgpa', 
+            'salary', 'monthly salary', 'from other sources if any', 'total',
+            'amount', 'rupees', 'marks obtained', 'total marks', 'cgpa',
             'per semester', 'per year', 'total expenses', 'expected amount',
             'value in rs', 'engine cc'
         ];
-        
+
         const headerLower = header.toLowerCase();
         return numericHeaders.some(term => headerLower.includes(term)) ? 'number' : 'text';
     };
@@ -89,7 +105,7 @@ const DynamicTable = ({ firstColumnTitle, headers, numRows, tableTitle, dispatch
                             {headers.slice(1).map((header, colIndex) => {
                                 const fieldName = header.toLowerCase().replace(/\s+/g, '_');
                                 const inputType = getInputType(header);
-                                
+
                                 return (
                                     <td key={colIndex} className="border border-gray-300 px-4 py-2">
                                         <input

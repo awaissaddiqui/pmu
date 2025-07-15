@@ -1,7 +1,8 @@
-import { createContext, useContext, useReducer, useEffect } from "react";
+import { createContext, useContext, useReducer, useEffect, useState } from "react";
 import { db } from "../Firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useAuth } from "./AuthProvider";
+import { useFormProgress } from "./FormProgressContext";
 
 // Create the context
 const UndergraduateFormContext = createContext();
@@ -23,60 +24,103 @@ const undergraduateFormReducer = (state, action) => {
 // Provider component
 export const UndergraduateFormProvider = ({ children }) => {
     const { user } = useAuth(); // Get current authenticated user
+    const { saveFormProgress, getFormProgress, markFormAsSubmitted } = useFormProgress()
+    const [isLoading, setIsLoading] = useState(true); // Track loading state
     const userId = user?.uid;
     const userEmail = user?.email;
 
-    // Load initial state from localStorage when component mounts
-    const initialState = userId ?
-        JSON.parse(localStorage.getItem(`undergraduate_form_${userId}`) || '{}') :
-        {};
 
-    const [formData, dispatch] = useReducer(undergraduateFormReducer, initialState);
 
-    // Save to localStorage whenever formData changes
+    const [formData, dispatch] = useReducer(undergraduateFormReducer);
+    const [saveStatus, setSaveStatus] = useState(""); // 'saving', 'saved', 'error'
     useEffect(() => {
-        if (userId && Object.keys(formData).length > 0) {
-            localStorage.setItem(`undergraduate_form_${userId}`, JSON.stringify(formData));
+        if (userId) {
+            const loadData = async () => {
+                const formKey = `undergraduate_${userId}`;
+                const updatedData = await getFormProgress(formKey); // ✅ Await the Promise!
+                if (updatedData && Object.keys(updatedData).length > 0) {
+                    console.log("Setting form data:", updatedData);
+                    dispatch({ type: "SET_FORM_DATA", data: updatedData });
+                } else {
+                    console.log("No existing data found, starting with empty form");
+                }
+                setIsLoading(false);
+            };
+            loadData();
         }
-    }, [formData, userId]);
+    }, [userId, getFormProgress]);
+
+    // Save function that will be called by the Save button
+    const saveForm = async () => {
+        if (!userId) return false;
+
+        try {
+            setSaveStatus("saving");
+            // console.log("Saving form data:", formData);
+
+            // Save with user ID appended to match Firebase structure
+            const formKey = `undergraduate`;
+            await saveFormProgress(formKey, formData);
+
+            setSaveStatus("saved");
+            setTimeout(() => setSaveStatus(""), 3000);
+            return true;
+        } catch (error) {
+            console.error("Error saving form:", error);
+            setSaveStatus("error");
+            setTimeout(() => setSaveStatus(""), 3000);
+            return false;
+        }
+    };
 
     // Submit function
     const submitForm = async () => {
         try {
-            if (!formData || Object.keys(formData).length === 0 || Object.values(formData).some(value => !value)) {
-                alert("❌ Please fill out all the form fields before submitting.");
-                return;
+            if (!user?.uid) {
+                alert("You must be logged in to submit the form.");
+                return false;
             }
+
+            setSaveStatus("saving");
 
             // Add user information to the form data
             const formWithUserInfo = {
                 ...formData,
-                userId: userId || '',
-                userEmail: userEmail || '',
+                userId: user.uid,
+                userEmail: user.email,
                 submittedAt: new Date().toISOString()
             };
 
-            // Save to Firestore using the document ID based on user email or form email
-            const docId = formData.email || userEmail;
-            const docRef = doc(db, "undergraduate-forms", docId);
+            // Save to final form collection
+            const docRef = doc(db, "undergraduate-forms", user.email);
             await setDoc(docRef, formWithUserInfo);
 
-            alert("Form Submitted Successfully");
+            // Mark the form as submitted in form-progress
+            await markFormAsSubmitted("undergraduate");
 
-            // Clear localStorage after successful submission
-            // if (userId) {
-            //     localStorage.removeItem(`undergraduate_form_${userId}`);
-            // }
+            setSaveStatus("saved");
+            setTimeout(() => setSaveStatus(""), 3000);
 
-            // dispatch({ type: "RESET_FORM" });
+            alert("Form submitted successfully!");
+            dispatch({ type: "RESET_FORM" });
+            return true;
         } catch (error) {
-            console.error(error);
+            console.error("Error submitting form:", error);
+            setSaveStatus("error");
             alert("An error occurred while submitting the form.");
+            return false;
         }
     };
 
     return (
-        <UndergraduateFormContext.Provider value={{ formData, dispatch, submitForm }}>
+        <UndergraduateFormContext.Provider value={{
+            formData,
+            dispatch,
+            saveForm,
+            submitForm,
+            isLoading,
+            saveStatus
+        }}>
             {children}
         </UndergraduateFormContext.Provider>
     );

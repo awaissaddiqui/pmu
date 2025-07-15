@@ -23,6 +23,9 @@ const UserLogin = () => {
                 if (userRole === "user") {
                     navigate(redirectPath); // Change to : /scholarships/CMEEF/details/UnNationalProgram
                 }
+                else if (userRole === "admin") {
+                    navigate("/admin");
+                }
             }
         });
         return () => unsubscribe();
@@ -38,13 +41,13 @@ const UserLogin = () => {
             const userRole = userDoc.exists() ? userDoc.data().role : null;
             setLoading(false);
 
-            if (userRole !== "user") {
-                setError("This route is for users only. Please use the admin login page.");
-                await auth.signOut();
+            if (userRole === "admin") {
+                navigate("/admin");
                 return;
             }
-
-            navigate(redirectPath);
+            else if (userRole === "user") {
+                navigate(redirectPath); // Redirect to the path specified in the query parameter
+            }
 
         } catch (error) {
             if (error.code === "auth/user-not-found") {
@@ -88,7 +91,7 @@ const UserLogin = () => {
                 </div>
                 <button
                     type="submit"
-                    className={`w-full bg-primary text-white py-2 rounded ${loading ? "cursor-not-allowed" : "cursor-pointer"} hover:bg-secondary hover:cursor-pointer transition`}
+                    className={`w-full bg-primary text-white py-2 rounded ${loading ? "hover:cursor-not-allowed" : "hover:cursor-pointer"} hover:bg-secondary hover:cursor-pointer transition`}
                     disabled={loading}
                 >
                     {loading ? "Logging in..." : "Login"}

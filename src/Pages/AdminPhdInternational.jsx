@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import InfoGrid from '../components/InfoGrid';
+import BackButton from '../components/BackButton';
 
 const AdminPhdInternational = () => {
     const [formData, setFormData] = useState([]);
@@ -29,7 +30,7 @@ const AdminPhdInternational = () => {
     return (
         <div className="w-full mx-auto bg-white shadow-lg rounded-lg p-6 gap-8">
             <h2 className="text-3xl font-bold text-center mb-6">PHD National Form Details</h2>
-
+            <BackButton />
             {/* Personal Information */}
             <InfoGrid
                 title="Personal Information"

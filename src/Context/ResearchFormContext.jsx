@@ -1,10 +1,11 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer, useState } from "react";
 import { db } from "../Firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useAuth } from "./AuthProvider";
+import { useFormProgress } from "./FormProgressContext";
+
 // Create the context
 const ResearchFormContext = createContext();
-
 
 // Reducer function to handle form state updates
 const researchFormReducer = (state, action) => {
@@ -14,7 +15,7 @@ const researchFormReducer = (state, action) => {
         case "SET_FORM_DATA":
             return { ...action.data };
         case "RESET_FORM":
-            return {}; // Reset form after successful submission
+            return {};
         default:
             return state;
     }
@@ -22,21 +23,46 @@ const researchFormReducer = (state, action) => {
 
 // Provider component
 export const ResearchFormProvider = ({ children }) => {
-    const { user } = useAuth(); // Get current authenticated user
+    const { user } = useAuth();
     const userId = user?.uid;
     const userEmail = user?.email;
-    // Load initial state from localStorage when component mounts
-    const initialState = userId ?
-        JSON.parse(localStorage.getItem(`research_form_${userId}`) || '{}') :
-        {};
-    const [formData, dispatch] = useReducer(researchFormReducer, initialState);
+    const { saveFormProgress, getFormProgress, markFormAsSubmitted } = useFormProgress();
 
-    // Save to localStorage whenever formData changes
+    const [formData, dispatch] = useReducer(researchFormReducer, {});
+    const [isLoading, setIsLoading] = useState(true);
+    const [saveStatus, setSaveStatus] = useState(""); // 'saving', 'saved', 'error'
+
+    // Load saved progress from Firestore on mount
     useEffect(() => {
-        if (userId && Object.keys(formData).length > 0) {
-            localStorage.setItem(`research_form_${userId}`, JSON.stringify(formData));
+        if (userId) {
+            const loadData = async () => {
+                setIsLoading(true);
+                const formKey = `research_${userId}`;
+                const savedData = await getFormProgress(formKey);
+                if (savedData && Object.keys(savedData).length > 0) {
+                    dispatch({ type: "SET_FORM_DATA", data: savedData });
+                }
+                setIsLoading(false);
+            };
+            loadData();
         }
-    }, [formData, userId]);
+    }, [userId, getFormProgress]);
+
+    // Save function (call this from your Save button)
+    const saveForm = async () => {
+        if (!userId) return false;
+        try {
+            setSaveStatus("saving");
+            await saveFormProgress("research", formData);
+            setSaveStatus("saved");
+            setTimeout(() => setSaveStatus(""), 3000);
+            return true;
+        } catch (error) {
+            setSaveStatus("error");
+            setTimeout(() => setSaveStatus(""), 3000);
+            return false;
+        }
+    };
 
     // Submit function
     const submitForm = async () => {
@@ -65,13 +91,12 @@ export const ResearchFormProvider = ({ children }) => {
             const docRef = doc(db, "research-forms", docId);
             await setDoc(docRef, formWithUserInfo);
 
+            // Mark as submitted in progress
+            await markFormAsSubmitted("research");
+
             alert("Form Submitted Successfully");
-
-            // if (userId) {
-            //     localStorage.removeItem(`research_form_${userId}`);
-            // }
+            // Optionally reset form after submit
             // dispatch({ type: "RESET_FORM" });
-
         } catch (error) {
             console.error(error);
             alert("An error occurred while submitting the form. Please try again.");
@@ -79,7 +104,14 @@ export const ResearchFormProvider = ({ children }) => {
     };
 
     return (
-        <ResearchFormContext.Provider value={{ formData, dispatch, submitForm }}>
+        <ResearchFormContext.Provider value={{
+            formData,
+            dispatch,
+            saveForm,
+            submitForm,
+            isLoading,
+            saveStatus
+        }}>
             {children}
         </ResearchFormContext.Provider>
     );

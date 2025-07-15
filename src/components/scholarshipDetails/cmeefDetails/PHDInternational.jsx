@@ -481,6 +481,7 @@ const PHDInternational = () => {
                                     dispatch={dispatch}
                                     firstColumnTitle={['SSC/Matric', 'HSSC/Intermediate', 'Bachelors (B.A, BSc, Hons. etc.)', 'Masters or Equivalent', 'M. Phil', 'GRE/GAT (Subject/General)', 'Medals (Gold/Silver/Bronze)', 'Other (please specify)']}
                                     numRows={8}
+                                    formData={formData}
                                 />
                             </div>
 
@@ -555,6 +556,7 @@ const PHDInternational = () => {
                                     dispatch={dispatch}
                                     firstColumnTitle={"#"}
                                     numRows={6}
+                                    formData={formData}
                                 />
                             </div>
 
@@ -568,6 +570,7 @@ const PHDInternational = () => {
                                     dispatch={dispatch}
                                     firstColumnTitle={"#"}
                                     numRows={2}
+                                    formData={formData}
                                 />
                             </div>
                             {/* Preffered subject Areas */}
@@ -611,6 +614,7 @@ const PHDInternational = () => {
                                     dispatch={dispatch}
                                     firstColumnTitle={"#"}
                                     numRows={7}
+                                    formData={formData}
                                 />
                             </div>
 
@@ -783,6 +787,7 @@ const PHDInternational = () => {
                                     dispatch={dispatch}
                                     firstColumnTitle={["Father", "Mother", "Guardian", "Self", "Spouse", "Others"]}
                                     numRows={6}
+                                    formData={formData}
                                 />
                             </div>
                             {/* Annual Income */}
@@ -794,6 +799,7 @@ const PHDInternational = () => {
                                     dispatch={dispatch}
                                     firstColumnTitle={["Agriculture Income", "Income from Savings (Interests/Dividends)", "Pension", "Real State Holdings", "Support from relatives", "Others(please specify)", "Total Annual household income"]}
                                     numRows={7}
+                                    formData={formData}
                                 />
                             </div>
 
@@ -867,6 +873,7 @@ const PHDInternational = () => {
                                             dispatch={dispatch}
                                             firstColumnTitle={["Plots", "Houses", "Buildings", "Land", "Others (Specify)"]}
                                             numRows={5}
+                                            formData={formData}
                                         />
                                     </div>
                                 )}
@@ -879,6 +886,7 @@ const PHDInternational = () => {
                                     dispatch={dispatch}
                                     firstColumnTitle={["Father/Guardian", "Mother/Guardian", "Self", "Spouse", "Others (Specify)"]}
                                     numRows={5}
+                                    formData={formData}
                                 />
 
                             </div>
@@ -909,6 +917,7 @@ const PHDInternational = () => {
                                         dispatch={dispatch}
                                         firstColumnTitle={["Vehicle 1", "Vehicle 2", "Vehicle 3"]}
                                         numRows={3}
+                                        formData={formData}
                                     />
                                 </>
                             )}
@@ -923,6 +932,7 @@ const PHDInternational = () => {
                                     dispatch={dispatch}
                                     firstColumnTitle={["Educational Expenses", "Food", "Medical Expenses", "Rent or Mortgage(if applicable)", "Fuel And Vehicle Maintenance", "Loan Payments", "Clothing", "Electricity Bill", "Mobile phone bill", "Entertainment", "Servants Salaries", "Taxes", "Telephone Bill", "Vactions", "Others", "Total annual expenses"]}
                                     numRows={16}
+                                    formData={formData}
                                 />
 
                             </div>
@@ -957,6 +967,7 @@ const PHDInternational = () => {
                                         dispatch={dispatch}
                                         firstColumnTitle={["Bank (specify name)", "Relative (specify relationship)", "Credit Card", "Employer", "Other (please specify)"]}
                                         numRows={5}
+                                        formData={formData}
                                     />
 
                                 </div>
@@ -973,6 +984,7 @@ const PHDInternational = () => {
                                     dispatch={dispatch}
                                     firstColumnTitle={["Tution Fees", "Boarding", "Lodging", "Transport", "Books", "Misc", "Total (a)"]}
                                     numRows={7}
+                                    formData={formData}
                                 />
 
                             </div>
@@ -987,6 +999,7 @@ const PHDInternational = () => {
                                     dispatch={dispatch}
                                     firstColumnTitle={"#"}
                                     numRows={3}
+                                    formData={formData}
                                 />
 
                             </div>

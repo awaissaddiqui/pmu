@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FormInput from "../../FormInput";
 import { useGraduateNationalForm } from "../../../Context/GraduateNationalFormContext";
 import DynamicTable from "../../DynamicTable";
@@ -10,28 +10,35 @@ import { useNavigate } from "react-router";
 import { domiciles } from "../../../utils/data";
 
 const GraduateNationalProgram = () => {
-    const { formData, dispatch, submitForm } = useGraduateNationalForm();
+    const { formData, dispatch, submitForm, saveForm, saveStatus, isLoading } = useGraduateNationalForm();
     const [isUploading, setIsUploading] = useState(false);
     const [isFileUploaded, setIsFileUploaded] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showAlert, setShowAlert] = useState(true);
     const navigate = useNavigate();
 
+    // Restore file upload state if file already uploaded
+    useEffect(() => {
+        if (formData.attested_photo || formData.undertaking_file || formData.noc_file) {
+            setIsFileUploaded(true);
+        }
+    }, [formData.attested_photo, formData.undertaking_file, formData.noc_file]);
+
     const handleFileUpload = async (e, name) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        setIsUploading(true); // Disable the button while uploading
-        document.body.style.cursor = "wait"; // Change cursor to wait
+        setIsUploading(true);
+        document.body.style.cursor = "wait";
 
         try {
             const timestamp = Date.now();
             const uniqueFilePath = `${formData.email}/${name}_${timestamp}`;
 
             // Upload the file to Supabase
-            const { data, error } = await supabaseDb.storage
+            const { error } = await supabaseDb.storage
                 .from("graduatenational")
-                .upload(uniqueFilePath, file);
+                .upload(uniqueFilePath, file, { upsert: true });
 
             if (error) throw error;
 
@@ -40,22 +47,19 @@ const GraduateNationalProgram = () => {
                 .from("graduatenational")
                 .getPublicUrl(uniqueFilePath);
 
-            // console.log(downloadURL);
-
-            // Update the form field with the file's public URL
             dispatch({
                 type: "UPDATE_FIELD",
                 field: name,
                 value: downloadURL.data.publicUrl,
             });
 
-            setIsFileUploaded(true); // Enable the submit button after successful upload
+            setIsFileUploaded(true);
         } catch (error) {
             console.error("Storage Error:", error);
-            setIsFileUploaded(false); // Ensure button remains disabled if there's an error
+            setIsFileUploaded(false);
         } finally {
-            setIsUploading(false); // Re-enable input and prevent loading loop
-            document.body.style.cursor = "default"; // Reset cursor to default
+            setIsUploading(false);
+            document.body.style.cursor = "default";
         }
     };
 
@@ -70,19 +74,12 @@ const GraduateNationalProgram = () => {
             "proposed_studies",
             "join_after_completion"
         ].includes(name)) {
-            // Count words in the text
-            const words = value.trim().split(/\s+/).filter(Boolean);
-
-            // If within limit, update normally
-            // NOTE: We're still allowing typing over the limit, but showing a warning
-            // This provides better UX than hard truncating
             dispatch({
                 type: "UPDATE_FIELD",
                 field: name,
                 value: value
             });
         } else {
-            // For other fields, update normally
             dispatch({
                 type: "UPDATE_FIELD",
                 field: name,
@@ -90,7 +87,6 @@ const GraduateNationalProgram = () => {
             });
         }
     };
-    // handle download form data
 
     const handleDownloadFormData = () => {
         const filename = `Graduate_National_Program_${formData.full_name}.pdf`;
@@ -419,9 +415,9 @@ const GraduateNationalProgram = () => {
                 <>
                     <form
                         className="w-full max-w-full bg-white shadow-lg rounded-lg p-6 space-y-4"
-                        onSubmit={(e) => {
+                        onSubmit={async (e) => {
                             e.preventDefault();
-                            submitForm();
+                            await submitForm();
                             setShowModal(true); // Show the modal on form submission
                         }}
                     >
@@ -565,6 +561,7 @@ const GraduateNationalProgram = () => {
                         <div className="mt-8 overflow-x-auto">
                             <DynamicTable
                                 tableTitle={"education_details"}
+                                formData={formData}
                                 headers={[
                                     "Certificate/Degree",
                                     "Major Subjects",
@@ -731,6 +728,7 @@ const GraduateNationalProgram = () => {
                                 dispatch={dispatch}
                                 firstColumnTitle={"#"}
                                 numRows={2}
+                                formData={formData}
                             />
                         </div>
 
@@ -749,6 +747,7 @@ const GraduateNationalProgram = () => {
                                 ]}
                                 dispatch={dispatch}
                                 firstColumnTitle={"#"}
+                                formData={formData}
                                 numRows={5}
                             />
                         </div>
@@ -787,6 +786,7 @@ const GraduateNationalProgram = () => {
                                     ]}
                                     dispatch={dispatch}
                                     firstColumnTitle={"#"}
+                                    formData={formData}
                                     numRows={7}
                                 />
                             </div>
@@ -936,6 +936,7 @@ const GraduateNationalProgram = () => {
                                     "Others",
                                 ]}
                                 numRows={6}
+                                formData={formData}
                             />
                         </div>
                         {/* Annual Income */}
@@ -958,6 +959,7 @@ const GraduateNationalProgram = () => {
                                     "Total Annual household income",
                                 ]}
                                 numRows={7}
+                                formData={formData}
                             />
                         </div>
 
@@ -1072,6 +1074,7 @@ const GraduateNationalProgram = () => {
                                         "Others (Specify)",
                                     ]}
                                     numRows={5}
+                                    formData={formData}
                                 />
                             </div>
                         )}
@@ -1100,6 +1103,7 @@ const GraduateNationalProgram = () => {
                                     "Others (Specify)",
                                 ]}
                                 numRows={5}
+                                formData={formData}
                             />
                         </div>
                         <fieldset className="border p-4 rounded-lg mb-6">
@@ -1139,6 +1143,7 @@ const GraduateNationalProgram = () => {
                                     dispatch={dispatch}
                                     firstColumnTitle={["Vehicle 1", "Vehicle 2", "Vehicle 3"]}
                                     numRows={3}
+                                    formData={formData}
                                 />
                             </>
                         )}
@@ -1172,6 +1177,7 @@ const GraduateNationalProgram = () => {
                                     "Total annual expenses",
                                 ]}
                                 numRows={16}
+                                formData={formData}
                             />
                         </div>
                         <label className="block font-medium">
@@ -1223,6 +1229,7 @@ const GraduateNationalProgram = () => {
                                         "Other (please specify)",
                                     ]}
                                     numRows={5}
+                                    formData={formData}
                                 />
                             </div>
                         )}
@@ -1255,6 +1262,7 @@ const GraduateNationalProgram = () => {
                                     "Total (a)",
                                 ]}
                                 numRows={7}
+                                formData={formData}
                             />
                         </div>
                         {/* Financial Aid Agencies Section */}
@@ -1275,6 +1283,7 @@ const GraduateNationalProgram = () => {
                                 dispatch={dispatch}
                                 firstColumnTitle={"#"}
                                 numRows={3}
+                                formData={formData}
                             />
                         </div>
                         {/* Statement of Purpose Section */}
@@ -1424,10 +1433,18 @@ const GraduateNationalProgram = () => {
                             </div>
                         </div>
                         {/* Submit Button */}
-                        <div className="flex justify-end">
+                        <div className="flex justify-end gap-4 mt-6">
+                            <button
+                                type="button"
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded"
+                                onClick={saveForm}
+                                disabled={isLoading || saveStatus === "saving"}
+                            >
+                                {saveStatus === "saving" ? "Saving..." : "Save"}
+                            </button>
                             <button
                                 type="submit"
-                                className={`bg-primary hover:bg-secondary text-white font-bold w-full md:w-48 py-3.5 px-12 rounded ${!isFileUploaded
+                                className={`bg-primary hover:bg-secondary text-white font-bold py-2 px-8 rounded ${!isFileUploaded
                                     ? "opacity-50 cursor-not-allowed"
                                     : "cursor-pointer"
                                     }`}
@@ -1436,6 +1453,16 @@ const GraduateNationalProgram = () => {
                                 {isUploading ? "Uploading..." : "Submit"}
                             </button>
                         </div>
+                        {saveStatus === "saved" && (
+                            <div className="text-green-600 mt-2 font-medium text-right">
+                                ✅ Progress saved!
+                            </div>
+                        )}
+                        {saveStatus === "error" && (
+                            <div className="text-red-600 mt-2 font-medium text-right">
+                                ❌ Error saving progress. Please try again.
+                            </div>
+                        )}
                     </form>
                 </>
             )}

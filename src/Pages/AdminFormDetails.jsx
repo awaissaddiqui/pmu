@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import BackButton from "../components/BackButton";
 
 const AdminFormDetails = () => {
     const { email } = useParams();
@@ -43,7 +44,7 @@ const AdminFormDetails = () => {
                 <h1 className="text-2xl font-semibold text-secondary mb-4">
                     HREF Registration Form Details
                 </h1>
-
+                <BackButton />
                 <table className="w-full border-collapse border border-gray-300">
                     <thead>
                         <tr className="bg-primary text-white">

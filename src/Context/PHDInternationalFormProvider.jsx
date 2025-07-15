@@ -1,7 +1,8 @@
-import { createContext, useReducer, useContext, useEffect } from "react";
+import { createContext, useReducer, useContext, useEffect, useState } from "react";
 import { db } from "../Firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useAuth } from "./AuthProvider";
+import { useFormProgress } from "./FormProgressContext";
 
 const PHDInternationalFormContext = createContext();
 
@@ -12,58 +13,88 @@ const PHDInternationalFormReducer = (state, action) => {
         case "SET_FORM_DATA":
             return { ...action.data };
         case "RESET_FORM":
-            return {}; // Reset form after successful submission
+            return {};
         default:
             return state;
     }
-}
+};
 
 export const PHDInternationalFormProvider = ({ children }) => {
-    const { user } = useAuth(); // Get current authenticated user
+    const { user } = useAuth();
     const userId = user?.uid;
     const userEmail = user?.email;
-    // Load initial state from localStorage when component mounts
-    const initialState = userId ?
-        JSON.parse(localStorage.getItem(`phd_international_form_${userId}`) || '{}') :
-        {};
+    const { saveFormProgress, getFormProgress, markFormAsSubmitted } = useFormProgress();
 
-    const [formData, dispatch] = useReducer(PHDInternationalFormReducer, initialState);
-    // Save to localStorage whenever formData changes
+    const [formData, dispatch] = useReducer(PHDInternationalFormReducer, {});
+    const [isLoading, setIsLoading] = useState(true);
+    const [saveStatus, setSaveStatus] = useState(""); // 'saving', 'saved', 'error'
+
+    // Load saved progress from Firestore on mount
     useEffect(() => {
-        if (userId && Object.keys(formData).length > 0) {
-            localStorage.setItem(`phd_international_form_${userId}`, JSON.stringify(formData));
+        if (userId) {
+            const loadData = async () => {
+                setIsLoading(true);
+                const formKey = `phd_${userId}`;
+                const savedData = await getFormProgress(formKey);
+                if (savedData && Object.keys(savedData).length > 0) {
+                    dispatch({ type: "SET_FORM_DATA", data: savedData });
+                }
+                setIsLoading(false);
+            };
+            loadData();
         }
-    }, [formData, userId]);
+    }, [userId, getFormProgress]);
 
+    // Save function (call this from your Save button)
+    const saveForm = async () => {
+        if (!userId) return false;
+        try {
+            setSaveStatus("saving");
+            await saveFormProgress("phd", formData);
+            setSaveStatus("saved");
+            setTimeout(() => setSaveStatus(""), 3000);
+            return true;
+        } catch (error) {
+            setSaveStatus("error");
+            setTimeout(() => setSaveStatus(""), 3000);
+            return false;
+        }
+    };
+
+    // Submit function
     const submitForm = async () => {
         try {
-            // console.log(formData);
             const formWithUserInfo = {
                 ...formData,
                 userId: userId || '',
                 userEmail: userEmail || '',
                 submittedAt: new Date().toISOString()
             };
-            const docRef = await doc(db, "phd-international", formData.email);
+            const docRef = doc(db, "phd-international", formData.email || userEmail || userId);
             await setDoc(docRef, formWithUserInfo);
-            // dispatch({ type: "RESET_FORM" });
+
+            // Mark as submitted in progress
+            await markFormAsSubmitted("phd");
+
             alert("Form submitted successfully");
-            // national-graduate-form
-
-            // if (userId) {
-            //     localStorage.removeItem(`phd_international_form_${userId}`);
-            // }
-            // dispatch({ type: "RESET_FORM" });
-
+            dispatch({ type: "RESET_FORM" });
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     return (
-        <PHDInternationalFormContext.Provider value={{ formData, dispatch, submitForm }}>
+        <PHDInternationalFormContext.Provider value={{
+            formData,
+            dispatch,
+            saveForm,
+            submitForm,
+            isLoading,
+            saveStatus
+        }}>
             {children}
         </PHDInternationalFormContext.Provider>
-    )
+    );
 };
+
 export const usePHDInternationalForm = () => useContext(PHDInternationalFormContext);

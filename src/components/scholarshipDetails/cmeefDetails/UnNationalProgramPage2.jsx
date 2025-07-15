@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUndergraduateForm } from "../../../Context/UndergraduateFormContext";
 import FormInput from "../../FormInput";
@@ -13,6 +13,12 @@ const UnNationalProgramPage2 = () => {
     const [isFileUploaded, setIsFileUploaded] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
+    useEffect(() => {
+        if (formData.signed_declaration_fileUnNat) {
+            setIsFileUploaded(true);
+        }
+    }, [formData.signed_declaration_fileUnNat]);
+
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -21,8 +27,6 @@ const UnNationalProgramPage2 = () => {
         document.body.style.cursor = "wait"; // Change cursor to wait
 
         try {
-
-
             const { data, error } = await supabaseDb.storage.from("unNationalProgram").upload(`${formData.email}/signed_declaration_fileUnNat`, file);
             if (error) throw error;
             const downloadURL = await supabaseDb.storage.from("unNationalProgram").getPublicUrl(`${formData.email}/signed_declaration_fileUnNat`);
@@ -44,6 +48,7 @@ const UnNationalProgramPage2 = () => {
             document.body.style.cursor = "default"; // Reset cursor to default
         }
     };
+
 
     const handleTableChange = (event, field) => {
         const { name, value } = event.target;
@@ -381,6 +386,7 @@ const UnNationalProgramPage2 = () => {
                                             ]}
                                             dispatch={dispatch}
                                             numRows={3}
+                                            formData={formData}
                                         />
                                     </>
                                 )}
@@ -407,6 +413,7 @@ const UnNationalProgramPage2 = () => {
                                 <h2 className="text-lg font-semibold mb-4">Assets Information</h2>
                                 <DynamicTable
                                     tableTitle="AssetsInformation"
+                                    formData={formData}
                                     firstColumnTitle={["Residential", "Commercial", "Agricultural", "Employer/Govt Scheme"]}
                                     headers={[
                                         "Assets Title",
@@ -427,6 +434,7 @@ const UnNationalProgramPage2 = () => {
                                 <DynamicTable
                                     dispatch={dispatch}
                                     numRows={6}
+                                    formData={formData}
                                     tableTitle="assetsWorth"
                                     firstColumnTitle={[
                                         "House",
@@ -462,6 +470,7 @@ const UnNationalProgramPage2 = () => {
                                 <h2 className="text-xl mt-4 font-semibold ">Applicants educational record: </h2>
                                 <DynamicTable
                                     tableTitle="educationRecord"
+                                    formData={formData}
                                     firstColumnTitle={["Bachelors", "Intermediate", "Bachelors"]}
                                     headers={[
                                         "Level of Study",
@@ -514,6 +523,7 @@ const UnNationalProgramPage2 = () => {
                                         <DynamicTable
                                             tableTitle="scholarshipsDetails"
                                             firstColumnTitle="#"
+                                            formData={formData}
                                             headers={[
                                                 "",
                                                 "Name of institute",
